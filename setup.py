@@ -9,5 +9,5 @@ setup(name='python-fs-stack',
       license='FamilySearch API License Agreement <https://devnet.familysearch.org/downloads/sample-code/sample-clients/sample-client-license>',
       package_dir={'': 'src'},
       packages=['enunciate'],
-      scripts=['src/login.py'],
+      scripts=['src/login.py', 'src/login_web.py'],
       )
