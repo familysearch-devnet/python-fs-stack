@@ -21,8 +21,8 @@ familysearch_base_url = 'http://www.dev.usys.org'
 properties_url = familysearch_base_url + '/identity/v2/properties' + '?dataFormat=application/json'
 properties = identity.parse(urllib2.urlopen(properties_url)).properties
 request_token_url = properties["request.token.url"]
-access_token_url = properties["access.token.url"]
 authorize_url = properties["authorize.url"]
+access_token_url = properties["access.token.url"]
 
 urls = (
         '/', 'login',
@@ -33,7 +33,7 @@ app = web.application(urls, globals())
 
 def oauth_request(url, consumer_key, consumer_secret, token_secret="", params={}):
     url = list(urlparse.urlparse(url))
-    query = urlparse.parse_qs(url[4])
+    query = dict(urlparse.parse_qsl(url[4]))
     query.update(params)
     query.update({
                   "oauth_consumer_key": consumer_key,
@@ -44,7 +44,10 @@ def oauth_request(url, consumer_key, consumer_secret, token_secret="", params={}
                  })
     url[4] = urllib.urlencode(query)
     url = urlparse.urlunparse(url)
-    response = urllib2.urlopen(url)
+    try:
+        response = urllib2.urlopen(url)
+    except urllib2.HTTPError, error:
+        response = error
     return response.getcode(), response.read()
 
 
