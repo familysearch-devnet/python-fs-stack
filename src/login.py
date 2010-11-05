@@ -12,11 +12,13 @@ import webbrowser
 
 from enunciate import identity
 
-consumer_key = 'WCQY-7J1Q-GKVV-7DNM-SQ5M-9Q5H-JX3H-CMJK'
-consumer_secret = ''
+developer_key = 'WCQY-7J1Q-GKVV-7DNM-SQ5M-9Q5H-JX3H-CMJK'
+developer_secret = ''
 
 familysearch_base_url = 'http://www.dev.usys.org'
-properties_url = familysearch_base_url + '/identity/v2/properties' + '?dataFormat=application/json'
+endpoint_format = '%s/identity/v2/%%s?dataFormat=application/json' % familysearch_base_url
+properties_url = endpoint_format % 'properties'
+login_url = endpoint_format % 'login'
 
 properties = identity.parse(urllib2.urlopen(properties_url)).properties
 request_token_url = properties["request.token.url"]
@@ -69,7 +71,7 @@ class OAuthLoginHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 # request token to sign this request. After this is done you throw away the
                 # request token and use the access token returned. You should store this 
                 # access token somewhere safe, like a database, for future use.
-                status, content = oauth_request(access_token_url, consumer_key, consumer_secret,
+                status, content = oauth_request(access_token_url, developer_key, developer_secret,
                                                 token_secret=self.state['oauth_token_secret'],
                                                 params={
                                                         "oauth_token": self.state['oauth_token'],
@@ -151,7 +153,7 @@ def login_oauth():
     # Step 1: Get a request token. This is a temporary token that is used for 
     # having the user authorize an access token and to sign the request to obtain 
     # said access token.
-    status, content = oauth_request(request_token_url, consumer_key, consumer_secret,
+    status, content = oauth_request(request_token_url, developer_key, developer_secret,
                                     params={"oauth_callback": callback_url})
     if status != 200:
         raise Exception('Error %s obtaining request token.' % status)
@@ -164,6 +166,16 @@ def login_oauth():
         return state['oauth_token']
     else:
         raise Exception('Error obtaining access token.')
+
+
+def login_basic(username, password):
+    """Get a FamilySearch session ID using Basic Authentication.
+    
+    Raise urllib2.HTTPError(401) if credentials are invalid.
+    
+    """
+    credentials = "username=%s&password=%s&key=%s" % (username, password, developer_key)
+    return identity.parse(urllib2.urlopen(login_url, credentials)).session.id
 
 
 if __name__ == '__main__':
