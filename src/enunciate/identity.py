@@ -19,6 +19,9 @@ class JSONBase:
         return json.dumps(self.to_json_dict())
 
     def __repr__(self):
+        return "%s(%s)" % (self.__class__.__name__, self.to_json_dict())
+
+    def __str__(self):
         return self.to_json()
 
 
