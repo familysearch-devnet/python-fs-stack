@@ -20,86 +20,6 @@ endpoint_format = '%s/identity/v2/%%s?dataFormat=application/json' % familysearc
 properties_url = endpoint_format % 'properties'
 login_url = endpoint_format % 'login'
 
-properties = identity.parse(urllib2.urlopen(properties_url)).properties
-request_token_url = properties["request.token.url"]
-authorize_url = properties["authorize.url"]
-access_token_url = properties["access.token.url"]
-
-AUTHORIZED_URL = "/authorized"
-LOGIN_SUCCESS_HTML = """
-<html>
-  <head>
-    <title>Login success</title>
-  </head>
-  <body>
-    FamilySearch login successful.
-    You may close this window and return to the application.
-  </body>
-</html>
-"""
-LOGIN_FAILURE_HTML = """
-<html>
-  <head>
-    <title>Login failure</title>
-  </head>
-  <body>
-    FamilySearch login failed.
-    Please close this window, return to the application, and try again.
-  </body>
-</html>
-"""
-
-
-class OAuthLoginHandler(BaseHTTPServer.BaseHTTPRequestHandler):
-    def __init__(self, state, *args, **kwargs):
-        """Extend BaseHTTPRequestHandler.__init__ to save a state variable.
-        
-        state must be a mutable object for the handler to return the session ID
-        """
-        self.state = state
-        BaseHTTPServer.BaseHTTPRequestHandler.__init__(self, *args, **kwargs)
-    
-    def do_GET(self):
-        url = urlparse.urlparse(self.path)
-        if url.path == AUTHORIZED_URL:
-            authorized_url_params = dict(urlparse.parse_qsl(url.query))
-            if authorized_url_params['oauth_token'] == self.state['oauth_token']:
-                self.state['oauth_verifier'] = authorized_url_params['oauth_verifier']
-                
-                # Step 3: Once the consumer has redirected the user back to the oauth_callback
-                # URL you can request the access token the user has approved. You use the 
-                # request token to sign this request. After this is done you throw away the
-                # request token and use the access token returned. You should store this 
-                # access token somewhere safe, like a database, for future use.
-                status, content = oauth_request(access_token_url, developer_key, developer_secret,
-                                                token_secret=self.state['oauth_token_secret'],
-                                                params={
-                                                        "oauth_token": self.state['oauth_token'],
-                                                        "oauth_verifier": self.state['oauth_verifier'],
-                                                       })
-                if status == 200:
-                    self.state.clear()
-                    self.state.update(urlparse.parse_qsl(content))
-                    self.send_response(200)
-                    self.send_header("Content-type", "text/html")
-                    self.end_headers()
-                    self.wfile.write(LOGIN_SUCCESS_HTML)
-                    return
-                else:
-                    self.state.clear()
-                    self.send_response(500)
-                    self.send_header("Content-type", "text/html")
-                    self.end_headers()
-                    self.wfile.write(LOGIN_FAILURE_HTML)
-                    return
-        self.state.clear()
-        self.send_error(500)
-    
-    def log_message(self, *args, **kwargs):
-        """Override the log_message function to avoid printing the request to the terminal."""
-        pass
-
-
 def oauth_request(url, consumer_key, consumer_secret, token_secret="", params={}):
     """Make an OAuth request and return the HTTP status and response.
     
@@ -144,6 +64,88 @@ def login_oauth():
     Raise an exception if obtaining either the request token or access token fails.
     
     """
+
+    properties = identity.parse(urllib2.urlopen(properties_url)).properties
+    request_token_url = properties["request.token.url"]
+    authorize_url = properties["authorize.url"]
+    access_token_url = properties["access.token.url"]
+
+    AUTHORIZED_URL = "/authorized"
+    LOGIN_SUCCESS_HTML = """
+    <html>
+      <head>
+        <title>Login success</title>
+      </head>
+      <body>
+        FamilySearch login successful.
+        You may close this window and return to the application.
+      </body>
+    </html>
+    """
+    LOGIN_FAILURE_HTML = """
+    <html>
+      <head>
+        <title>Login failure</title>
+      </head>
+      <body>
+        FamilySearch login failed.
+        Please close this window, return to the application, and try again.
+      </body>
+    </html>
+    """
+
+    class OAuthLoginHandler(BaseHTTPServer.BaseHTTPRequestHandler):
+        """Handle the callback request after the user authorizes the request token."""
+        
+        def __init__(self, state, *args, **kwargs):
+            """Extend BaseHTTPRequestHandler.__init__ to save a state variable.
+            
+            state must be a mutable object for the handler to return the session ID
+            """
+            self.state = state
+            BaseHTTPServer.BaseHTTPRequestHandler.__init__(self, *args, **kwargs)
+        
+        def do_GET(self):
+            url = urlparse.urlparse(self.path)
+            if url.path == AUTHORIZED_URL:
+                authorized_url_params = dict(urlparse.parse_qsl(url.query))
+                if authorized_url_params['oauth_token'] == self.state['oauth_token']:
+                    self.state['oauth_verifier'] = authorized_url_params['oauth_verifier']
+                    
+                    # Step 3: Once the consumer has redirected the user back to the oauth_callback
+                    # URL you can request the access token the user has approved. You use the 
+                    # request token to sign this request. After this is done you throw away the
+                    # request token and use the access token returned. You should store this 
+                    # access token somewhere safe, like a database, for future use.
+                    status, content = oauth_request(access_token_url, developer_key, developer_secret,
+                                                    token_secret=self.state['oauth_token_secret'],
+                                                    params={
+                                                            "oauth_token": self.state['oauth_token'],
+                                                            "oauth_verifier": self.state['oauth_verifier'],
+                                                           })
+                    if status == 200:
+                        self.state.clear()
+                        self.state.update(urlparse.parse_qsl(content))
+                        self.send_response(200)
+                        self.send_header("Content-type", "text/html")
+                        self.end_headers()
+                        self.wfile.write(LOGIN_SUCCESS_HTML)
+                        return
+                    else:
+                        self.state.clear()
+                        self.send_response(500)
+                        self.send_header("Content-type", "text/html")
+                        self.end_headers()
+                        self.wfile.write(LOGIN_FAILURE_HTML)
+                        return
+            self.state.clear()
+            self.send_error(500)
+        
+        def log_message(self, *args, **kwargs):
+            """Override the log_message function to avoid printing the request to the terminal."""
+            pass
+
+
     state = {}
     authorize_handler = functools.partial(OAuthLoginHandler, state)
     authorize_server = BaseHTTPServer.HTTPServer(("", 0), authorize_handler)
