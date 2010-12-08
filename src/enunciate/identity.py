@@ -55,7 +55,7 @@ class Identity(JSONBase):
             self.version = o["version"]
         if "properties" in o:
             self.properties = FSDict(o["properties"])
-        if "session" in o:
+        if "session" in o and o["session"]:
             self.session = Session(o["session"])
 
     def to_json_dict(self):
