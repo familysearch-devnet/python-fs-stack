@@ -25,6 +25,9 @@ fs = FamilySearch('ClientApp/1.0', 'developer_key', session='session_id')
 
 # Use the production system instead of the reference system
 fs = FamilySearch('ClientApp/1.0', 'developer_key', base='https://api.familysearch.org')
+
+# Log out
+fs.logout()
 """
 
 import urllib
@@ -49,6 +52,7 @@ class FamilySearch(object):
     login -- log into FamilySearch with a username and password
     initialize -- create an unauthenticated session
     authenticate -- authenticate a session with a username and password
+    logout -- log out of FamilySearch, terminating the current session
     """
 
     def __init__(self, agent, key, username=None, password=None, session=None, base='http://www.dev.usys.org'):
@@ -72,7 +76,11 @@ class FamilySearch(object):
         self.login_url = identity_base + 'login'
         self.initialize_url = identity_base + 'initialize'
         self.authenticate_url = identity_base + 'authenticate'
-        self.opener = urllib2.build_opener(urllib2.HTTPCookieProcessor)
+        self.logout_url = identity_base + 'logout'
+
+        cookie_handler = urllib2.HTTPCookieProcessor()
+        self.cookies = cookie_handler.cookiejar
+        self.opener = urllib2.build_opener(cookie_handler)
 
         if username and password:
             self.login(username, password)
@@ -110,6 +118,14 @@ class FamilySearch(object):
         credentials = urllib.urlencode({'username': username, 'password': password})
         self.session = identity.parse(self._request(self.authenticate_url, credentials)).session.id
         return self.session
+
+    def logout(self):
+        """
+        Log the current session out of FamilySearch.
+        """
+        self._request(self.logout_url)
+        self.session = None
+        self.cookies.clear()
 
     def _request(self, url, data=None):
         """
