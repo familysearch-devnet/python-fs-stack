@@ -72,6 +72,7 @@ class FamilySearch(object):
         self.login_url = identity_base + 'login'
         self.initialize_url = identity_base + 'initialize'
         self.authenticate_url = identity_base + 'authenticate'
+        self.opener = urllib2.build_opener(urllib2.HTTPCookieProcessor)
 
         if username and password:
             self.login(username, password)
@@ -106,7 +107,7 @@ class FamilySearch(object):
         This should follow an initialize call. Web applications must use OAuth.
 
         """
-        credentials = urllib.urlencode({'username': username, 'password': password, 'sessionId': self.session})
+        credentials = urllib.urlencode({'username': username, 'password': password})
         self.session = identity.parse(self._request(self.authenticate_url, credentials)).session.id
         return self.session
 
@@ -122,7 +123,7 @@ class FamilySearch(object):
         url = self._add_json_format(url)
         request = urllib2.Request(url, data)
         request.add_header('User-Agent', self.agent)
-        return urllib2.urlopen(request)
+        return self.opener.open(request)
 
     def _add_json_format(self, url):
         """
