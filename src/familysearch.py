@@ -31,6 +31,9 @@ fs.logout()
 
 # Print current user's family tree details
 print fs.person()
+
+# Print current user's pedigree
+print fs.pedigree()
 """
 
 try:
@@ -61,6 +64,7 @@ class FamilySearch(object):
     authenticate -- authenticate a session with a username and password
     logout -- log out of FamilySearch, terminating the current session
     person -- get a person or list of persons from the family tree
+    pedigree -- get the pedigree of a person or list of persons
     """
 
     def __init__(self, agent, key, username=None, password=None, session=None, base='http://www.dev.usys.org'):
@@ -87,6 +91,7 @@ class FamilySearch(object):
         self.logout_url = identity_base + 'logout'
         familytree_base = base + '/familytree/v2/'
         self.person_url = familytree_base + 'person'
+        self.pedigree_url = familytree_base + 'pedigree'
 
         cookie_handler = urllib2.HTTPCookieProcessor()
         self.cookies = cookie_handler.cookiejar
@@ -151,6 +156,25 @@ class FamilySearch(object):
         if options or kw_options:
             url = self._add_query_params(url, options, **kw_options)
         response = json.load(self._request(url))['persons']
+        if len(response) == 1:
+            return response[0]
+        else:
+            return response
+
+    def pedigree(self, person_id=None, options={}, **kw_options):
+        """
+        Get a pedigree for the given person or list of persons from the family tree.
+        """
+        if isinstance(person_id, list):
+            person_id = ",".join(person_id)
+        elif person_id == 'me':
+            person_id = None
+        url = self.pedigree_url
+        if person_id:
+            url = self._add_subpath(url, person_id)
+        if options or kw_options:
+            url = self._add_query_params(url, options, **kw_options)
+        response = json.load(self._request(url))['pedigrees']
         if len(response) == 1:
             return response[0]
         else:
