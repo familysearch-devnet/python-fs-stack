@@ -28,8 +28,15 @@ fs = FamilySearch('ClientApp/1.0', 'developer_key', base='https://api.familysear
 
 # Log out
 fs.logout()
+
+# Print current user's family tree details
+print fs.person()
 """
 
+try:
+    import json
+except ImportError:
+    import simplejson as json
 import urllib
 import urllib2
 import urlparse
@@ -53,6 +60,7 @@ class FamilySearch(object):
     initialize -- create an unauthenticated session
     authenticate -- authenticate a session with a username and password
     logout -- log out of FamilySearch, terminating the current session
+    person -- get a person or list of persons from the family tree
     """
 
     def __init__(self, agent, key, username=None, password=None, session=None, base='http://www.dev.usys.org'):
@@ -77,6 +85,8 @@ class FamilySearch(object):
         self.initialize_url = identity_base + 'initialize'
         self.authenticate_url = identity_base + 'authenticate'
         self.logout_url = identity_base + 'logout'
+        familytree_base = base + '/familytree/v2/'
+        self.person_url = familytree_base + 'person'
 
         cookie_handler = urllib2.HTTPCookieProcessor()
         self.cookies = cookie_handler.cookiejar
@@ -127,6 +137,25 @@ class FamilySearch(object):
         self.session = None
         self.cookies.clear()
 
+    def person(self, person_id=None, options={}, **kw_options):
+        """
+        Get a representation of a person or list of persons from the family tree.
+        """
+        if isinstance(person_id, list):
+            person_id = ",".join(person_id)
+        elif person_id == 'me':
+            person_id = None
+        url = self.person_url
+        if person_id:
+            url = self._add_subpath(url, person_id)
+        if options or kw_options:
+            url = self._add_query_params(url, options, **kw_options)
+        response = json.load(self._request(url))['persons']
+        if len(response) == 1:
+            return response[0]
+        else:
+            return response
+
     def _request(self, url, data=None):
         """
         Make a GET or a POST request to the FamilySearch API.
@@ -141,12 +170,34 @@ class FamilySearch(object):
         request.add_header('User-Agent', self.agent)
         return self.opener.open(request)
 
+    def _add_subpath(self, url, subpath):
+        """
+        Add a subpath to the path component of the given URL.
+
+        For example, adding sub to http://example.com/path?query
+        becomes http://example.com/path/sub?query.
+
+        """
+        parts = urlparse.urlsplit(url)
+        path = parts[2] + '/' + subpath
+        return urlparse.urlunsplit((parts[0], parts[1], path, parts[3], parts[4]))
+
+    def _add_query_params(self, url, params={}, **kw_params):
+        """
+        Add the specified query parameters to the given URL.
+
+        Parameters can be passed either as a dictionary or as keyword arguments.
+
+        """
+        parts = urlparse.urlsplit(url)
+        query_parts = urlparse.parse_qs(parts[3])
+        query_parts.update(params)
+        query_parts.update(kw_params)
+        query = urllib.urlencode(query_parts, True)
+        return urlparse.urlunsplit((parts[0], parts[1], parts[2], query, parts[4]))
+
     def _add_json_format(self, url):
         """
         Add dataFormat=application/json to the query string of the given URL.
         """
-        parts = urlparse.urlsplit(url)
-        query_parts = urlparse.parse_qsl(parts[3])
-        query_parts.append(('dataFormat', 'application/json'))
-        query = urllib.urlencode(query_parts)
-        return urlparse.urlunsplit((parts[0], parts[1], parts[2], query, parts[4]))
+        return self._add_query_params(url, dataFormat='application/json')
