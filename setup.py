@@ -8,7 +8,6 @@ setup(
     author='Peter Henderson',
     author_email='peter.henderson@ldschurch.org',
     license='FamilySearch API License Agreement <https://devnet.familysearch.org/downloads/sample-code/sample-clients/sample-client-license>',
-    package_dir={'': 'src'},
-    packages=['enunciate'],
-    scripts=['src/login.py', 'src/login_web.py'],
+    packages=['familysearch', 'familysearch.enunciate'],
+    scripts=['examples/login.py', 'examples/login_web.py'],
 )
