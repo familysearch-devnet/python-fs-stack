@@ -20,6 +20,7 @@ class FamilyTreeV2(object):
         familytree_base = self.base + '/familytree/v2/'
         self.person_url = familytree_base + 'person'
         self.pedigree_url = familytree_base + 'pedigree'
+        self.search_url = familytree_base + 'search'
 
     def person(self, person_id=None, options={}, **kw_options):
         """
@@ -58,6 +59,17 @@ class FamilyTreeV2(object):
             return response[0]
         else:
             return response
+
+    def search(self, options={}, **kw_options):
+        """
+        Search for persons in the family tree.
+
+        This method only supports GET parameters, not an XML payload.
+        """
+        url = self.search_url
+        if options or kw_options:
+            url = self._add_query_params(url, options, **kw_options)
+        return json.load(self._request(url))['searches']
 
 from . import FamilySearch
 FamilySearch.__bases__ += (FamilyTreeV2,)
