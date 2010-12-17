@@ -27,12 +27,12 @@ class JSONBase:
 
 class FSDict(dict):
     """Convenience class to access FamilySearch-style property lists as dictionaries
-    
+
     For example,
         [{"name": "key1", "value": "value1"}, {"name": "key2", "value": "value2"}]
     converts to
         {"key1": "value1", "key2": "value2"}
-    
+
     """
 
     def __init__(self, pairs=None):
