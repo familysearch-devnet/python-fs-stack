@@ -36,19 +36,14 @@ print fs.person()
 print fs.pedigree()
 """
 
-try:
-    import json
-except ImportError:
-    import simplejson as json
 import urllib
 import urllib2
 import urlparse
 
-from enunciate import identity
-
 __version__ = '0.1'
 
 
+class object(object): pass
 class FamilySearch(object):
 
     """
@@ -84,101 +79,13 @@ class FamilySearch(object):
         self.key = key
         self.session = session
         self.base = base
-        identity_base = base + '/identity/v2/'
-        self.login_url = identity_base + 'login'
-        self.initialize_url = identity_base + 'initialize'
-        self.authenticate_url = identity_base + 'authenticate'
-        self.logout_url = identity_base + 'logout'
-        familytree_base = base + '/familytree/v2/'
-        self.person_url = familytree_base + 'person'
-        self.pedigree_url = familytree_base + 'pedigree'
+        self.opener = urllib2.build_opener()
 
-        cookie_handler = urllib2.HTTPCookieProcessor()
-        self.cookies = cookie_handler.cookiejar
-        self.opener = urllib2.build_opener(cookie_handler)
+        for mixin in self.__class__.__bases__:
+            mixin.__init__(self)
 
         if username and password:
             self.login(username, password)
-
-    def login(self, username, password):
-        """
-        Log into FamilySearch using Basic Authentication.
-
-        Web applications must use OAuth.
-
-        """
-        credentials = urllib.urlencode({'username': username, 'password': password, 'key': self.key})
-        self.session = identity.parse(self._request(self.login_url, credentials)).session.id
-        return self.session
-
-    def initialize(self):
-        """
-        Initialize a FamilySearch session using Basic Authentication.
-
-        This creates an unauthenticated session and should be followed by an
-        authenticate call. Web applications must use OAuth.
-
-        """
-        key = urllib.urlencode({'key': self.key})
-        self.session = identity.parse(self._request(self.initialize_url, key)).session.id
-        return self.session
-
-    def authenticate(self, username, password):
-        """
-        Authenticate a FamilySearch session using Basic Authentication.
-
-        This should follow an initialize call. Web applications must use OAuth.
-
-        """
-        credentials = urllib.urlencode({'username': username, 'password': password})
-        self.session = identity.parse(self._request(self.authenticate_url, credentials)).session.id
-        return self.session
-
-    def logout(self):
-        """
-        Log the current session out of FamilySearch.
-        """
-        self._request(self.logout_url)
-        self.session = None
-        self.cookies.clear()
-
-    def person(self, person_id=None, options={}, **kw_options):
-        """
-        Get a representation of a person or list of persons from the family tree.
-        """
-        if isinstance(person_id, list):
-            person_id = ",".join(person_id)
-        elif person_id == 'me':
-            person_id = None
-        url = self.person_url
-        if person_id:
-            url = self._add_subpath(url, person_id)
-        if options or kw_options:
-            url = self._add_query_params(url, options, **kw_options)
-        response = json.load(self._request(url))['persons']
-        if len(response) == 1:
-            return response[0]
-        else:
-            return response
-
-    def pedigree(self, person_id=None, options={}, **kw_options):
-        """
-        Get a pedigree for the given person or list of persons from the family tree.
-        """
-        if isinstance(person_id, list):
-            person_id = ",".join(person_id)
-        elif person_id == 'me':
-            person_id = None
-        url = self.pedigree_url
-        if person_id:
-            url = self._add_subpath(url, person_id)
-        if options or kw_options:
-            url = self._add_query_params(url, options, **kw_options)
-        response = json.load(self._request(url))['pedigrees']
-        if len(response) == 1:
-            return response[0]
-        else:
-            return response
 
     def _request(self, url, data=None):
         """
@@ -225,3 +132,6 @@ class FamilySearch(object):
         Add dataFormat=application/json to the query string of the given URL.
         """
         return self._add_query_params(url, dataFormat='application/json')
+
+import identity_v2
+import familytree_v2
