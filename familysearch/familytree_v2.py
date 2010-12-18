@@ -21,6 +21,7 @@ class FamilyTreeV2(object):
         self.person_url = familytree_base + 'person'
         self.pedigree_url = familytree_base + 'pedigree'
         self.search_url = familytree_base + 'search'
+        self.match_url = familytree_base + 'match'
 
     def person(self, person_id=None, options={}, **kw_options):
         """
@@ -70,6 +71,21 @@ class FamilyTreeV2(object):
         if options or kw_options:
             url = self._add_query_params(url, options, **kw_options)
         return json.load(self._request(url))['searches']
+
+    def match(self, person_id=None, options={}, **kw_options):
+        """
+        Search for possible duplicates in the family tree.
+
+        This method only supports GET parameters, not an XML payload.
+        """
+        if isinstance(person_id, list):
+            person_id = ",".join(person_id)
+        url = self.match_url
+        if person_id:
+            url = self._add_subpath(url, person_id)
+        if options or kw_options:
+            url = self._add_query_params(url, options, **kw_options)
+        return json.load(self._request(url))['matches']
 
 from . import FamilySearch
 FamilySearch.__bases__ += (FamilyTreeV2,)
