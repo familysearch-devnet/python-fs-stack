@@ -60,6 +60,8 @@ class FamilySearch(object):
     logout -- log out of FamilySearch, terminating the current session
     person -- get a person or list of persons from the family tree
     pedigree -- get the pedigree of a person or list of persons
+    search -- search for persons in the family tree
+    match -- search for possible duplicates in the family tree
     """
 
     def __init__(self, agent, key, username=None, password=None, session=None, base='http://www.dev.usys.org'):
