@@ -46,8 +46,11 @@ class IdentityV2(object):
 
         """
         self.cookies.clear()
-        credentials = urllib.urlencode({'username': username, 'password': password, 'key': self.key})
-        self.session_id = identity.parse(self._request(self.login_url, credentials)).session.id
+        credentials = urllib.urlencode({'username': username,
+                                        'password': password,
+                                        'key': self.key})
+        self.session_id = identity.parse(self._request(self.login_url,
+                                                       credentials)).session.id
         return self.session_id
 
     def initialize(self):
@@ -60,7 +63,8 @@ class IdentityV2(object):
         """
         self.cookies.clear()
         key = urllib.urlencode({'key': self.key})
-        self.session_id = identity.parse(self._request(self.initialize_url, key)).session.id
+        self.session_id = identity.parse(self._request(self.initialize_url,
+                                                       key)).session.id
         return self.session_id
 
     def authenticate(self, username, password):
@@ -75,7 +79,8 @@ class IdentityV2(object):
             # Set sessionId parameter if the session ID is not set in a cookie
             credentials['sessionId'] = self.session_id
         credentials = urllib.urlencode(credentials)
-        self.session_id = identity.parse(self._request(self.authenticate_url, credentials)).session.id
+        self.session_id = identity.parse(self._request(self.authenticate_url,
+                                                       credentials)).session.id
         return self.session_id
 
     def logout(self):

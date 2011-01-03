@@ -80,7 +80,8 @@ class FamilySearch(object):
     match -- search for possible duplicates in the family tree
     """
 
-    def __init__(self, agent, key, username=None, password=None, session=None, base='http://www.dev.usys.org'):
+    def __init__(self, agent, key, username=None, password=None, session=None,
+                 base='http://www.dev.usys.org'):
         """
         Instantiate a FamilySearch proxy object.
 
