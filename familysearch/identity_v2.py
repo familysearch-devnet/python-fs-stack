@@ -6,6 +6,7 @@ Main class: IdentityV2, meant to be mixed-in to the FamilySearch class
 
 import urllib
 import urllib2
+import urlparse
 
 from enunciate import identity
 
@@ -22,6 +23,7 @@ class IdentityV2(object):
         self.initialize_url = identity_base + 'initialize'
         self.authenticate_url = identity_base + 'authenticate'
         self.logout_url = identity_base + 'logout'
+        self.session_url = identity_base + 'session'
 
         cookie_handler = urllib2.HTTPCookieProcessor()
         self.cookies = cookie_handler.cookiejar
@@ -68,6 +70,25 @@ class IdentityV2(object):
         self._request(self.logout_url)
         self.session = None
         self.cookies.clear()
+
+    def session_read(self):
+        """
+        Keep the current session in an active state by sending an empty request.
+
+        Calling this method is an easy way to turn a sessionId query parameter
+        into a cookie without doing anything else.
+
+        """
+        if not self.cookies and self.session:
+            # Add sessionId parameter to session_url if cookie is not set
+            parts = urlparse.urlsplit(self.session_url)
+            query_parts = urlparse.parse_qs(parts[4])
+            query_parts['sessionId'] = self.session
+            query = urllib.urlencode(query_parts, True)
+            url = urlparse.urlunsplit((parts[0], parts[1], parts[2], query, parts[4]))
+        else:
+            url = self.session_url
+        return identity.parse(self._request(url)).session.id
 
 from . import FamilySearch
 FamilySearch.__bases__ += (IdentityV2,)
