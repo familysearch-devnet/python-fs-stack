@@ -26,6 +26,15 @@ fs = FamilySearch('ClientApp/1.0', 'developer_key', session='session_id')
 # Use the production system instead of the reference system
 fs = FamilySearch('ClientApp/1.0', 'developer_key', base='https://api.familysearch.org')
 
+# Log in with OAuth
+import webbrowser
+fs = FamilySearch('ClientApp/1.0', 'developer_key')
+fs.request_token()
+webbrowser.open(fs.authorize())
+# [Enter username and password into browser window that opens]
+verifier = [verifier from resulting web page]
+fs.access_token(verifier)
+
 # Log out
 fs.logout()
 
@@ -58,6 +67,9 @@ class FamilySearch(object):
     initialize -- create an unauthenticated session
     authenticate -- authenticate a session with a username and password
     logout -- log out of FamilySearch, terminating the current session
+    request_token -- get an OAuth request token
+    authorize -- construct OAuth authorization URL
+    access_token -- get an OAuth access token (to complete the login process)
     person -- get a person or list of persons from the family tree
     pedigree -- get the pedigree of a person or list of persons
     search -- search for persons in the family tree
