@@ -47,8 +47,8 @@ class IdentityV2(object):
         """
         self.cookies.clear()
         credentials = urllib.urlencode({'username': username, 'password': password, 'key': self.key})
-        self.session = identity.parse(self._request(self.login_url, credentials)).session.id
-        return self.session
+        self.session_id = identity.parse(self._request(self.login_url, credentials)).session.id
+        return self.session_id
 
     def initialize(self):
         """
@@ -60,8 +60,8 @@ class IdentityV2(object):
         """
         self.cookies.clear()
         key = urllib.urlencode({'key': self.key})
-        self.session = identity.parse(self._request(self.initialize_url, key)).session.id
-        return self.session
+        self.session_id = identity.parse(self._request(self.initialize_url, key)).session.id
+        return self.session_id
 
     def authenticate(self, username, password):
         """
@@ -71,22 +71,22 @@ class IdentityV2(object):
 
         """
         credentials = {'username': username, 'password': password}
-        if not self.cookies and self.session:
+        if not self.cookies and self.session_id:
             # Set sessionId parameter if the session ID is not set in a cookie
-            credentials['sessionId'] = self.session
+            credentials['sessionId'] = self.session_id
         credentials = urllib.urlencode(credentials)
-        self.session = identity.parse(self._request(self.authenticate_url, credentials)).session.id
-        return self.session
+        self.session_id = identity.parse(self._request(self.authenticate_url, credentials)).session.id
+        return self.session_id
 
     def logout(self):
         """
         Log the current session out of FamilySearch.
         """
         self._request(self.logout_url)
-        self.session = None
+        self.session_id = None
         self.cookies.clear()
 
-    def session_read(self):
+    def session(self):
         """
         Keep the current session in an active state by sending an empty request.
 
@@ -94,11 +94,11 @@ class IdentityV2(object):
         into a cookie without doing anything else.
 
         """
-        if not self.cookies and self.session:
+        if not self.cookies and self.session_id:
             # Add sessionId parameter to session_url if cookie is not set
             parts = urlparse.urlsplit(self.session_url)
             query_parts = urlparse.parse_qs(parts[4])
-            query_parts['sessionId'] = self.session
+            query_parts['sessionId'] = self.session_id
             query = urllib.urlencode(query_parts, True)
             url = urlparse.urlunsplit((parts[0], parts[1], parts[2], query, parts[4]))
         else:
@@ -117,7 +117,7 @@ class IdentityV2(object):
         oauth_response = self._oauth_request(self.request_token_url,
                                              oauth_callback=callback_url)
         response = dict(urlparse.parse_qsl(oauth_response.read()))
-        self.session = response['oauth_token']
+        self.session_id = response['oauth_token']
         self.oauth_secrets[response['oauth_token']] = response['oauth_token_secret']
         return response
 
@@ -132,9 +132,9 @@ class IdentityV2(object):
 
         """
         if not request_token:
-            if self.session and self.session in self.oauth_secrets:
+            if self.session_id and self.session_id in self.oauth_secrets:
                 # Use current session ID for oauth_token if it is set
-                request_token = self.session
+                request_token = self.session_id
             else:
                 # Otherwise, get a new request token and use it
                 request_token = self.request_token()['oauth_token']
@@ -150,18 +150,18 @@ class IdentityV2(object):
         """
         Get an access token (session ID) to complete step 3 of the OAuth login process.
         """
-        if not request_token and self.session:
+        if not request_token and self.session_id:
             # Use current session ID for oauth_token if it is set
-            request_token = self.session
-            if not token_secret and self.session in self.oauth_secrets:
+            request_token = self.session_id
+            if not token_secret and self.session_id in self.oauth_secrets:
                 # Use saved secret for oauth_token_secret if it is set
                 token_secret = self.oauth_secrets[request_token]
         oauth_response = self._oauth_request(self.access_token_url, token_secret,
                                              oauth_token=request_token,
                                              oauth_verifier=verifier)
         response = dict(urlparse.parse_qsl(oauth_response.read()))
-        self.session = response['oauth_token']
-        self.session_read()
+        self.session_id = response['oauth_token']
+        self.session()
         return response
 
     def _oauth_request(self, url, token_secret='', params={}, **kw_params):

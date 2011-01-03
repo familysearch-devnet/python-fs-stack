@@ -35,6 +35,9 @@ webbrowser.open(fs.authorize())
 verifier = [verifier from resulting web page]
 fs.access_token(verifier)
 
+# Keep current session active
+fs.session()
+
 # Log out
 fs.logout()
 
@@ -67,6 +70,7 @@ class FamilySearch(object):
     initialize -- create an unauthenticated session
     authenticate -- authenticate a session with a username and password
     logout -- log out of FamilySearch, terminating the current session
+    session -- keep current session active
     request_token -- get an OAuth request token
     authorize -- construct OAuth authorization URL
     access_token -- get an OAuth access token (to complete the login process)
@@ -91,7 +95,7 @@ class FamilySearch(object):
         """
         self.agent = '%s Python-FS-Stack/%s' % (agent, __version__)
         self.key = key
-        self.session = session
+        self.session_id = session
         self.base = base
         self.opener = urllib2.build_opener()
 
