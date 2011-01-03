@@ -182,20 +182,17 @@ class IdentityV2(object):
         keyword arguments.
 
         """
-        parts = urlparse.urlsplit(url)
-        query_parts = urlparse.parse_qs(parts[4])
-        query_parts.update(params)
-        query_parts.update(kw_params)
-        query_parts.update({
-                            'oauth_consumer_key': self.key,
-                            'oauth_nonce': str(random.randint(0, 99999999)),
-                            'oauth_signature_method': 'PLAINTEXT',
-                            'oauth_signature': '%s&%s' % ('', token_secret),
-                            'oauth_timestamp': str(int(time.time())),
-                           })
-        query = urllib.urlencode(query_parts, True)
-        url = urlparse.urlunsplit((parts[0], parts[1], parts[2], query, parts[4]))
-        request = urllib2.Request(url)
+        oauth_params = dict(params)
+        oauth_params.update(kw_params)
+        oauth_params.update({
+                             'oauth_consumer_key': self.key,
+                             'oauth_nonce': str(random.randint(0, 99999999)),
+                             'oauth_signature_method': 'PLAINTEXT',
+                             'oauth_signature': '%s&%s' % ('', token_secret),
+                             'oauth_timestamp': str(int(time.time())),
+                            })
+        data = urllib.urlencode(oauth_params, True)
+        request = urllib2.Request(url, data)
         request.add_header('User-Agent', self.agent)
         return self.opener.open(request)
 
