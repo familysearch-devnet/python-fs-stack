@@ -34,6 +34,8 @@ class IdentityV2(object):
         self.access_token_url = self.identity_properties['access.token.url']
         self.oauth_secrets = dict()
 
+        self.logged_in = False
+
         cookie_handler = urllib2.HTTPCookieProcessor()
         self.cookies = cookie_handler.cookiejar
         self.opener = urllib2.build_opener(cookie_handler)
@@ -45,12 +47,14 @@ class IdentityV2(object):
         Web applications must use OAuth.
 
         """
+        self.logged_in = False
         self.cookies.clear()
         credentials = urllib.urlencode({'username': username,
                                         'password': password,
                                         'key': self.key})
         self.session_id = identity.parse(self._request(self.login_url,
                                                        credentials)).session.id
+        self.logged_in = True
         return self.session_id
 
     def initialize(self):
@@ -61,6 +65,7 @@ class IdentityV2(object):
         authenticate call. Web applications must use OAuth.
 
         """
+        self.logged_in = False
         self.cookies.clear()
         key = urllib.urlencode({'key': self.key})
         self.session_id = identity.parse(self._request(self.initialize_url,
@@ -81,12 +86,14 @@ class IdentityV2(object):
         credentials = urllib.urlencode(credentials)
         self.session_id = identity.parse(self._request(self.authenticate_url,
                                                        credentials)).session.id
+        self.logged_in = True
         return self.session_id
 
     def logout(self):
         """
         Log the current session out of FamilySearch.
         """
+        self.logged_in = False
         self._request(self.logout_url)
         self.session_id = None
         self.cookies.clear()
@@ -118,6 +125,7 @@ class IdentityV2(object):
         and token secret, which are needed to get an access token (step 3).
 
         """
+        self.logged_in = False
         self.cookies.clear()
         oauth_response = self._oauth_request(self.request_token_url,
                                              oauth_callback=callback_url)
@@ -167,6 +175,7 @@ class IdentityV2(object):
         response = dict(urlparse.parse_qsl(oauth_response.read()))
         self.session_id = response['oauth_token']
         self.session()
+        self.logged_in = True
         return response
 
     def _oauth_request(self, url, token_secret='', params={}, **kw_params):
