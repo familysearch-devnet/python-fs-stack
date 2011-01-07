@@ -34,7 +34,8 @@ class IdentityV2(object):
         self.access_token_url = self.identity_properties['access.token.url']
         self.oauth_secrets = dict()
 
-        self.logged_in = False
+        # Assume logged_in if session_id is set
+        self.logged_in = bool(self.session_id)
 
         cookie_handler = urllib2.HTTPCookieProcessor()
         self.cookies = cookie_handler.cookiejar
@@ -115,7 +116,13 @@ class IdentityV2(object):
             url = urlparse.urlunsplit((parts[0], parts[1], parts[2], query, parts[4]))
         else:
             url = self.session_url
-        return identity.parse(self._request(url)).session.id
+        try:
+            session = identity.parse(self._request(url)).session.id
+            self.logged_in = True
+            return session
+        except:
+            self.logged_in = False
+            raise
 
     def request_token(self, callback_url='oob'):
         """
@@ -208,7 +215,12 @@ class IdentityV2(object):
         data = urllib.urlencode(oauth_params, True)
         request = urllib2.Request(url, data)
         request.add_header('User-Agent', self.agent)
-        return self.opener.open(request)
+        try:
+            return self.opener.open(request)
+        except urllib2.HTTPError, error:
+            if error.getcode() == 401:
+                self.logged_in = False
+            raise
 
 from . import FamilySearch
 FamilySearch.__bases__ += (IdentityV2,)

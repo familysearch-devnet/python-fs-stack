@@ -118,7 +118,12 @@ class FamilySearch(object):
         url = self._add_json_format(url)
         request = urllib2.Request(url, data)
         request.add_header('User-Agent', self.agent)
-        return self.opener.open(request)
+        try:
+            return self.opener.open(request)
+        except urllib2.HTTPError, error:
+            if error.getcode() == 401:
+                self.logged_in = False
+            raise
 
     def _add_subpath(self, url, subpath):
         """
