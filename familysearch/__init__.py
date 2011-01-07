@@ -78,6 +78,10 @@ class FamilySearch(object):
     pedigree -- get the pedigree of a person or list of persons
     search -- search for persons in the family tree
     match -- search for possible duplicates in the family tree
+
+    Public attributes:
+
+    logged_in -- flag indicating whether this proxy instance is logged in
     """
 
     def __init__(self, agent, key, username=None, password=None, session=None,
