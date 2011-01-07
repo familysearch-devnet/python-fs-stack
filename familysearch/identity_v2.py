@@ -22,8 +22,6 @@ class IdentityV2(object):
         """Set up the URLs for this IdentityV2 object."""
         self.identity_base = self.base + '/identity/v2/'
 
-        properties_url = self.identity_base + 'properties'
-        self.identity_properties = identity.parse(self._request(properties_url)).properties
         self.oauth_secrets = dict()
 
         # Assume logged_in if session_id is set
@@ -32,6 +30,16 @@ class IdentityV2(object):
         cookie_handler = urllib2.HTTPCookieProcessor()
         self.cookies = cookie_handler.cookiejar
         self.opener = urllib2.build_opener(cookie_handler)
+
+    @property
+    def identity_properties(self):
+        """
+        Retrieve and cache the Identity version 2 module's properties.
+        """
+        url = self.identity_base + 'properties'
+        if not hasattr(self, '_identity_properties'):
+            self._identity_properties = identity.parse(self._request(url)).properties
+        return self._identity_properties
 
     def login(self, username, password):
         """
@@ -131,7 +139,7 @@ class IdentityV2(object):
 
     def authorize(self, request_token=None):
         """
-        Construct and return the Authorize URL for step 2 of the OAuth login process.
+        Construct and return the User Authorization URL for step 2 of the OAuth login process.
 
         This URL should be loaded into the user's browser. It is the
         application's responsibility to receive the OAuth verifier from the
