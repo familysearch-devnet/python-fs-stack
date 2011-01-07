@@ -17,11 +17,7 @@ class FamilyTreeV2(object):
 
     def __init__(self):
         """Set up the URLs for this FamilyTreeV2 object."""
-        familytree_base = self.base + '/familytree/v2/'
-        self.person_url = familytree_base + 'person'
-        self.pedigree_url = familytree_base + 'pedigree'
-        self.search_url = familytree_base + 'search'
-        self.match_url = familytree_base + 'match'
+        self.familytree_base = self.base + '/familytree/v2/'
 
     def person(self, person_id=None, options={}, **kw_options):
         """
@@ -31,7 +27,7 @@ class FamilyTreeV2(object):
             person_id = ",".join(person_id)
         elif person_id == 'me':
             person_id = None
-        url = self.person_url
+        url = self.familytree_base + 'person'
         if person_id:
             url = self._add_subpath(url, person_id)
         if options or kw_options:
@@ -50,7 +46,7 @@ class FamilyTreeV2(object):
             person_id = ",".join(person_id)
         elif person_id == 'me':
             person_id = None
-        url = self.pedigree_url
+        url = self.familytree_base + 'pedigree'
         if person_id:
             url = self._add_subpath(url, person_id)
         if options or kw_options:
@@ -67,7 +63,7 @@ class FamilyTreeV2(object):
 
         This method only supports GET parameters, not an XML payload.
         """
-        url = self.search_url
+        url = self.familytree_base + 'search'
         if options or kw_options:
             url = self._add_query_params(url, options, **kw_options)
         return json.load(self._request(url))['searches']
@@ -80,7 +76,7 @@ class FamilyTreeV2(object):
         """
         if isinstance(person_id, list):
             person_id = ",".join(person_id)
-        url = self.match_url
+        url = self.familytree_base + 'match'
         if person_id:
             url = self._add_subpath(url, person_id)
         if options or kw_options:

@@ -20,18 +20,10 @@ class IdentityV2(object):
 
     def __init__(self):
         """Set up the URLs for this IdentityV2 object."""
-        identity_base = self.base + '/identity/v2/'
-        self.login_url = identity_base + 'login'
-        self.initialize_url = identity_base + 'initialize'
-        self.authenticate_url = identity_base + 'authenticate'
-        self.logout_url = identity_base + 'logout'
-        self.session_url = identity_base + 'session'
+        self.identity_base = self.base + '/identity/v2/'
 
-        properties_url = identity_base + 'properties'
+        properties_url = self.identity_base + 'properties'
         self.identity_properties = identity.parse(self._request(properties_url)).properties
-        self.request_token_url = self.identity_properties['request.token.url']
-        self.authorize_url = self.identity_properties['authorize.url']
-        self.access_token_url = self.identity_properties['access.token.url']
         self.oauth_secrets = dict()
 
         # Assume logged_in if session_id is set
@@ -50,11 +42,11 @@ class IdentityV2(object):
         """
         self.logged_in = False
         self.cookies.clear()
+        url = self.identity_base + 'login'
         credentials = urllib.urlencode({'username': username,
                                         'password': password,
                                         'key': self.key})
-        self.session_id = identity.parse(self._request(self.login_url,
-                                                       credentials)).session.id
+        self.session_id = identity.parse(self._request(url, credentials)).session.id
         self.logged_in = True
         return self.session_id
 
@@ -68,9 +60,9 @@ class IdentityV2(object):
         """
         self.logged_in = False
         self.cookies.clear()
+        url = self.identity_base + 'initialize'
         key = urllib.urlencode({'key': self.key})
-        self.session_id = identity.parse(self._request(self.initialize_url,
-                                                       key)).session.id
+        self.session_id = identity.parse(self._request(url, key)).session.id
         return self.session_id
 
     def authenticate(self, username, password):
@@ -80,13 +72,13 @@ class IdentityV2(object):
         This should follow an initialize call. Web applications must use OAuth.
 
         """
+        url = self.identity_base + 'authenticate'
         credentials = {'username': username, 'password': password}
         if not self.cookies and self.session_id:
             # Set sessionId parameter if the session ID is not set in a cookie
             credentials['sessionId'] = self.session_id
         credentials = urllib.urlencode(credentials)
-        self.session_id = identity.parse(self._request(self.authenticate_url,
-                                                       credentials)).session.id
+        self.session_id = identity.parse(self._request(url, credentials)).session.id
         self.logged_in = True
         return self.session_id
 
@@ -95,7 +87,8 @@ class IdentityV2(object):
         Log the current session out of FamilySearch.
         """
         self.logged_in = False
-        self._request(self.logout_url)
+        url = self.identity_base + 'logout'
+        self._request(url)
         self.session_id = None
         self.cookies.clear()
 
@@ -107,15 +100,14 @@ class IdentityV2(object):
         into a cookie without doing anything else.
 
         """
+        url = self.identity_base + 'session'
         if not self.cookies and self.session_id:
-            # Add sessionId parameter to session_url if cookie is not set
-            parts = urlparse.urlsplit(self.session_url)
+            # Add sessionId parameter to url if cookie is not set
+            parts = urlparse.urlsplit(url)
             query_parts = urlparse.parse_qs(parts[4])
             query_parts['sessionId'] = self.session_id
             query = urllib.urlencode(query_parts, True)
             url = urlparse.urlunsplit((parts[0], parts[1], parts[2], query, parts[4]))
-        else:
-            url = self.session_url
         try:
             session = identity.parse(self._request(url)).session.id
             self.logged_in = True
@@ -134,8 +126,8 @@ class IdentityV2(object):
         """
         self.logged_in = False
         self.cookies.clear()
-        oauth_response = self._oauth_request(self.request_token_url,
-                                             oauth_callback=callback_url)
+        url = self.identity_properties['request.token.url']
+        oauth_response = self._oauth_request(url, oauth_callback=callback_url)
         response = dict(urlparse.parse_qsl(oauth_response.read()))
         self.session_id = response['oauth_token']
         self.oauth_secrets[response['oauth_token']] = response['oauth_token_secret']
@@ -158,8 +150,9 @@ class IdentityV2(object):
             else:
                 # Otherwise, get a new request token and use it
                 request_token = self.request_token()['oauth_token']
-        # Add sessionId parameter to authorize_url
-        parts = urlparse.urlsplit(self.authorize_url)
+        # Add sessionId parameter to authorize.url
+        url = self.identity_properties['authorize.url']
+        parts = urlparse.urlsplit(url)
         query_parts = urlparse.parse_qs(parts[4])
         query_parts['sessionId'] = request_token
         query = urllib.urlencode(query_parts, True)
@@ -169,6 +162,10 @@ class IdentityV2(object):
     def access_token(self, verifier, request_token=None, token_secret=None):
         """
         Get an access token (session ID) to complete step 3 of the OAuth login process.
+
+        Returns a dictionary containing the OAuth response and stores the token
+        as the session ID to be used by future requests.
+
         """
         if not request_token and self.session_id:
             # Use current session ID for oauth_token if it is set
@@ -176,7 +173,8 @@ class IdentityV2(object):
             if not token_secret and self.session_id in self.oauth_secrets:
                 # Use saved secret for oauth_token_secret if it is set
                 token_secret = self.oauth_secrets[request_token]
-        oauth_response = self._oauth_request(self.access_token_url, token_secret,
+        url = self.identity_properties['access.token.url']
+        oauth_response = self._oauth_request(url, token_secret,
                                              oauth_token=request_token,
                                              oauth_verifier=verifier)
         response = dict(urlparse.parse_qsl(oauth_response.read()))
