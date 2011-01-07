@@ -103,11 +103,7 @@ class IdentityV2(object):
         url = self.identity_base + 'session'
         if not self.cookies and self.session_id:
             # Add sessionId parameter to url if cookie is not set
-            parts = urlparse.urlsplit(url)
-            query_parts = urlparse.parse_qs(parts[4])
-            query_parts['sessionId'] = self.session_id
-            query = urllib.urlencode(query_parts, True)
-            url = urlparse.urlunsplit((parts[0], parts[1], parts[2], query, parts[4]))
+            url = self._add_query_params(url, sessionId=self.session_id)
         try:
             session = identity.parse(self._request(url)).session.id
             self.logged_in = True
@@ -152,11 +148,7 @@ class IdentityV2(object):
                 request_token = self.request_token()['oauth_token']
         # Add sessionId parameter to authorize.url
         url = self.identity_properties['authorize.url']
-        parts = urlparse.urlsplit(url)
-        query_parts = urlparse.parse_qs(parts[4])
-        query_parts['sessionId'] = request_token
-        query = urllib.urlencode(query_parts, True)
-        url = urlparse.urlunsplit((parts[0], parts[1], parts[2], query, parts[4]))
+        url = self._add_query_params(url, sessionId=request_token)
         return url
 
     def access_token(self, verifier, request_token=None, token_secret=None):
