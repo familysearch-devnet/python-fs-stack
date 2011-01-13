@@ -19,7 +19,9 @@ class IdentityV2(object):
     """
 
     def __init__(self):
-        """Set up the URLs for this IdentityV2 object."""
+        """
+        Set up the URLs for this IdentityV2 object.
+        """
         self.identity_base = self.base + '/identity/v2/'
 
         self.oauth_secrets = dict()

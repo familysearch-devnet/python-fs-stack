@@ -16,7 +16,9 @@ class FamilyTreeV2(object):
     """
 
     def __init__(self):
-        """Set up the URLs for this FamilyTreeV2 object."""
+        """
+        Set up the URLs for this FamilyTreeV2 object.
+        """
         self.familytree_base = self.base + '/familytree/v2/'
 
     def _remove_nones(self, arg):
