@@ -19,6 +19,22 @@ class FamilyTreeV2(object):
         """Set up the URLs for this FamilyTreeV2 object."""
         self.familytree_base = self.base + '/familytree/v2/'
 
+    def _remove_nones(self, arg):
+        """
+        Remove all None values from a nested dict structure.
+
+        This method exists because the FamilySearch API returns all attributes
+        in a JSON response, with empty values set to null instead of being
+        hidden from the response.
+
+        """
+        if isinstance(arg, dict):
+            return dict([(k, self._remove_nones(v)) for (k, v) in arg.iteritems() if v is not None])
+        elif isinstance(arg, list):
+            return [self._remove_nones(i) for i in arg if i is not None]
+        else:
+            return arg
+
     def person(self, person_id=None, options={}, **kw_options):
         """
         Get a representation of a person or list of persons from the family tree.
@@ -33,6 +49,7 @@ class FamilyTreeV2(object):
         if options or kw_options:
             url = self._add_query_params(url, options, **kw_options)
         response = json.load(self._request(url))['persons']
+        response = self._remove_nones(response)
         if len(response) == 1:
             return response[0]
         else:
@@ -52,6 +69,7 @@ class FamilyTreeV2(object):
         if options or kw_options:
             url = self._add_query_params(url, options, **kw_options)
         response = json.load(self._request(url))['pedigrees']
+        response = self._remove_nones(response)
         if len(response) == 1:
             return response[0]
         else:
@@ -66,7 +84,7 @@ class FamilyTreeV2(object):
         url = self.familytree_base + 'search'
         if options or kw_options:
             url = self._add_query_params(url, options, **kw_options)
-        return json.load(self._request(url))['searches']
+        return self._remove_nones(json.load(self._request(url))['searches'])
 
     def match(self, person_id=None, options={}, **kw_options):
         """
@@ -81,7 +99,7 @@ class FamilyTreeV2(object):
             url = self._add_subpath(url, person_id)
         if options or kw_options:
             url = self._add_query_params(url, options, **kw_options)
-        return json.load(self._request(url))['matches']
+        return self._remove_nones(json.load(self._request(url))['matches'])
 
 from . import FamilySearch
 FamilySearch.__bases__ += (FamilyTreeV2,)
