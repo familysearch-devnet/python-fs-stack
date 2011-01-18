@@ -10,6 +10,11 @@ import urllib
 import urllib2
 import urlparse
 
+# Support Python < 2.6
+if not hasattr(urlparse, 'parse_qsl'):
+    import cgi
+    urlparse.parse_qsl = cgi.parse_qsl
+
 from enunciate import identity
 
 class IdentityV2(object):

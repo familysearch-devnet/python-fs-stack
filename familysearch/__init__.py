@@ -52,6 +52,11 @@ import urllib
 import urllib2
 import urlparse
 
+# Support Python < 2.6
+if not hasattr(urlparse, 'parse_qs'):
+    import cgi
+    urlparse.parse_qs = cgi.parse_qs
+
 __version__ = '0.1'
 
 
