@@ -114,3 +114,35 @@ Format the pedigree output more nicely::
 
   import pprint
   pprint.pprint(fs.pedigree())
+
+
+Searching for Persons in the Family Tree
+----------------------------------------
+
+Search for a male named John Smith::
+
+  results = fs.search(givenName='John', familyName='Smith', gender='Male', maxResults=10)
+
+Retrieve the second page of the previous search::
+
+  more_results = fs.search(contextId=results[0]['contextId'], maxResults=10, startIndex=10)
+
+Search for an exact match for John Smith (use an ``options`` dict to specify
+options with periods in their names)::
+
+  results = fs.search(options={'givenName.exact': 'John', 'familyName.exact': 'Smith'}, gender='Male', maxResults=10)
+
+Searching for Possible Duplicates
+---------------------------------
+
+Search for possible duplicates of a person::
+
+  results = fs.match('ABCD-123')
+
+Compute match score between two persons::
+
+  results = fs.match('ABCD-123', id='EFGH-456')
+
+Search for possible duplicates matching specified parameters::
+
+  results = fs.match(givenName='John', familyName='Smith', gender='Male', birthDate='1900', birthPlace='USA', deathDate='1950', deathPlace='USA')
