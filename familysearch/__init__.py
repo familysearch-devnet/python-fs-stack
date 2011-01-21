@@ -114,6 +114,8 @@ class FamilySearch(object):
 
         if username and password:
             self.login(username, password)
+        elif session:
+            self.session()
 
     def _request(self, url, data=None):
         """
