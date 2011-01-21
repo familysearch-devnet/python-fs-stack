@@ -97,10 +97,20 @@ Print current user's family tree details::
 
   print fs.person()
 
-Print multiple family tree entries, including all events and all children::
+To specify a person ID to retrieve, pass the ID as an argument::
+
+  print fs.person('ABCD-123')
+
+To print multiple family tree entries, pass a list of IDs as an argument. To
+pass additional parameters to the API, simply pass them as named arguments::
 
   print fs.person(['ABCD-123', 'EFGH-456'], events='all', children='all')
 
 Print current user's pedigree::
 
   print fs.pedigree()
+
+Format the pedigree output more nicely::
+
+  import pprint
+  pprint.pprint(fs.pedigree())
