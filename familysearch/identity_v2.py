@@ -116,9 +116,6 @@ class IdentityV2(object):
 
         """
         url = self.identity_base + 'session'
-        if not self.cookies and self.session_id:
-            # Add sessionId parameter to url if cookie is not set
-            url = self._add_query_params(url, sessionId=self.session_id)
         try:
             session = identity.parse(self._request(url)).session.id
             self.logged_in = True
