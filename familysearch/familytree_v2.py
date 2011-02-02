@@ -42,7 +42,7 @@ class FamilyTreeV2(object):
         Get a representation of a person or list of persons from the family tree.
         """
         if isinstance(person_id, list):
-            person_id = ",".join(person_id)
+            person_id = ','.join(person_id)
         elif person_id == 'me':
             person_id = None
         url = self.familytree_base + 'person'
@@ -62,7 +62,7 @@ class FamilyTreeV2(object):
         Get a pedigree for the given person or list of persons from the family tree.
         """
         if isinstance(person_id, list):
-            person_id = ",".join(person_id)
+            person_id = ','.join(person_id)
         elif person_id == 'me':
             person_id = None
         url = self.familytree_base + 'pedigree'
@@ -95,7 +95,7 @@ class FamilyTreeV2(object):
         This method only supports GET parameters, not an XML payload.
         """
         if isinstance(person_id, list):
-            person_id = ",".join(person_id)
+            person_id = ','.join(person_id)
         url = self.familytree_base + 'match'
         if person_id:
             url = self._add_subpath(url, person_id)

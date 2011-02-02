@@ -8,7 +8,7 @@ import webbrowser
 
 import familysearch
 
-user_agent = "LoginSample"
+user_agent = 'LoginSample'
 developer_key = 'WCQY-7J1Q-GKVV-7DNM-SQ5M-9Q5H-JX3H-CMJK'
 familysearch_base_url = 'http://www.dev.usys.org'
 
@@ -31,7 +31,7 @@ def login_oauth():
 
     """
 
-    AUTHORIZED_URL = "/authorized"
+    AUTHORIZED_URL = '/authorized'
     LOGIN_SUCCESS_HTML = """
     <html>
       <head>
@@ -72,13 +72,13 @@ def login_oauth():
                     access_token = fs.access_token(authorized_url_params['oauth_verifier'])
                     if 'oauth_token' in access_token:
                         self.send_response(200)
-                        self.send_header("Content-type", "text/html")
+                        self.send_header('Content-type', 'text/html')
                         self.end_headers()
                         self.wfile.write(LOGIN_SUCCESS_HTML)
                         return
                 except urllib2.HTTPError:
                     self.send_response(500)
-                    self.send_header("Content-type", "text/html")
+                    self.send_header('Content-type', 'text/html')
                     self.end_headers()
                     self.wfile.write(LOGIN_FAILURE_HTML)
                     return
@@ -90,9 +90,9 @@ def login_oauth():
 
 
     fs = create_proxy()
-    authorize_server = BaseHTTPServer.HTTPServer(("", 0), OAuthLoginHandler)
+    authorize_server = BaseHTTPServer.HTTPServer(('', 0), OAuthLoginHandler)
     port = authorize_server.server_port
-    callback_url = "http://localhost:%i%s" % (port, AUTHORIZED_URL)
+    callback_url = 'http://localhost:%i%s' % (port, AUTHORIZED_URL)
 
     # Step 1: Get a request token. This is a temporary token that is used for 
     # having the user authorize an access token and to sign the request to obtain 
@@ -115,7 +115,7 @@ def login_basic():
     Raise urllib2.HTTPError(401) if credentials are invalid.
 
     """
-    username = raw_input("Username: ")
+    username = raw_input('Username: ')
     # Hide keystrokes to avoid displaying the password (only works under POSIX)
     try:
         import termios, sys
@@ -125,13 +125,13 @@ def login_basic():
         new[3] = new[3] & ~termios.ECHO
         try:
             termios.tcsetattr(fd, termios.TCSADRAIN, new)
-            password = raw_input("Password: ")
+            password = raw_input('Password: ')
             print
         finally:
             termios.tcsetattr(fd, termios.TCSADRAIN, old)
     except ImportError:
-        print "Error hiding keystrokes; your password will be visible"
-        password = raw_input("Password: ")
+        print 'Error hiding keystrokes; your password will be visible'
+        password = raw_input('Password: ')
     fs = create_proxy()
     fs.login(username, password)
     return fs
@@ -139,4 +139,4 @@ def login_basic():
 
 if __name__ == '__main__':
     fs = login_oauth()
-    print "Use session ID: %s" % fs.session_id
+    print 'Use session ID: %s' % fs.session_id

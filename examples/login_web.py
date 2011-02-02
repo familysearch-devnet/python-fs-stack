@@ -7,7 +7,7 @@
 import familysearch
 import web
 
-user_agent = "LoginWebSample"
+user_agent = 'LoginWebSample'
 developer_key = 'WCQY-7J1Q-GKVV-7DNM-SQ5M-9Q5H-JX3H-CMJK'
 familysearch_base_url = 'http://www.dev.usys.org'
 
