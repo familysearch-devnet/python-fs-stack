@@ -86,7 +86,12 @@ class FamilyTreeV2(object):
         url = self.familytree_base + 'search'
         if options or kw_options:
             url = self._add_query_params(url, options, **kw_options)
-        return self._remove_nones(json.load(self._request(url))['searches'])
+        response = json.load(self._request(url))['searches']
+        response = self._remove_nones(response)
+        if len(response) == 1:
+            return response[0]
+        else:
+            return response
 
     def match(self, person_id=None, options={}, **kw_options):
         """
@@ -101,7 +106,12 @@ class FamilyTreeV2(object):
             url = self._add_subpath(url, person_id)
         if options or kw_options:
             url = self._add_query_params(url, options, **kw_options)
-        return self._remove_nones(json.load(self._request(url))['matches'])
+        response = json.load(self._request(url))['matches']
+        response = self._remove_nones(response)
+        if len(response) == 1:
+            return response[0]
+        else:
+            return response
 
 from . import FamilySearch
 FamilySearch.__bases__ += (FamilyTreeV2,)
