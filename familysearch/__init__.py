@@ -125,7 +125,7 @@ class FamilySearch(object):
 
         """
         url = self._add_json_format(url)
-        if not self.cookies and self.session_id:
+        if self.logged_in and not self.cookies:
             # Add sessionId parameter to url if cookie is not set
             url = self._add_query_params(url, sessionId=self.session_id)
         request = urllib2.Request(url, data)
