@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='python-fs-stack',
-    version='0.1',
+    version='0.2pre',
     description='Python wrapper for all FamilySearch APIs',
     url='https://devnet.familysearch.org/downloads/sample-code',
     author='Peter Henderson',
