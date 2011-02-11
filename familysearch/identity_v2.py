@@ -141,7 +141,7 @@ class IdentityV2(object):
         self.oauth_secrets[response['oauth_token']] = response['oauth_token_secret']
         return response
 
-    def authorize(self, request_token=None):
+    def authorize(self, request_token=None, options={}, **kw_options):
         """
         Construct and return the User Authorization URL for step 2 of the OAuth login process.
 
@@ -161,6 +161,8 @@ class IdentityV2(object):
         # Add sessionId parameter to authorize.url
         url = self.identity_properties['authorize.url']
         url = self._add_query_params(url, sessionId=request_token)
+        if options or kw_options:
+            url = self._add_query_params(url, options, **kw_options)
         return url
 
     def access_token(self, verifier, request_token=None, token_secret=None):
