@@ -4,6 +4,7 @@ setup(
     name='python-fs-stack',
     version='0.2pre',
     description='Python wrapper for all FamilySearch APIs',
+    long_description=open('README.rst').read(),
     url='https://devnet.familysearch.org/downloads/sample-code',
     author='Peter Henderson',
     author_email='peter.henderson@ldschurch.org',
