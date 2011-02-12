@@ -1,6 +1,6 @@
-python-fs-stack Changelog
-=========================
-
+===========================
+ python-fs-stack Changelog
+===========================
 
 0.2
 ---
@@ -10,8 +10,8 @@ python-fs-stack Changelog
 * Search and Match return a single object instead of a one-item list
 
 
-0.1
----
+0.1 (21 Jan 2011)
+-----------------
 
 * Initial release
 * Supports Family Tree Read requests only (person, pedigree, search, match)
