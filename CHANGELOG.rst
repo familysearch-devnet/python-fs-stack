@@ -7,6 +7,7 @@
 
 * Properly sends session ID on first request without needing to call session()
 * Search and Match return a single object instead of a one-item list
+* Supports pickling using any protocol (0-2)
 * Allows authorize() to supply arbitrary parameters
 * The login.py example reads the password more portably
 

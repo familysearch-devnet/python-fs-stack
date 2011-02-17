@@ -115,6 +115,21 @@ class FamilySearch(object):
         if username and password:
             self.login(username, password)
 
+    def __getstate__(self):
+        """
+        Return a dict containing the state necessary to pickle this instance.
+        """
+        return {'agent': ' '.join(self.agent.split(' ')[:-1]),
+                'key': self.key,
+                'session': self.session_id,
+                'base': self.base}
+
+    def __setstate__(self, state):
+        """
+        Restore the saved state obtained from unpickling this instance.
+        """
+        self.__init__(**state)
+
     def _request(self, url, data=None):
         """
         Make a GET or a POST request to the FamilySearch API.
