@@ -2,6 +2,7 @@
 # By Peter Henderson <peter.henderson@ldschurch.org>
 
 import BaseHTTPServer
+import getpass
 import urllib2
 import urlparse
 import webbrowser
@@ -117,21 +118,7 @@ def login_basic():
     """
     username = raw_input('Username: ')
     # Hide keystrokes to avoid displaying the password (only works under POSIX)
-    try:
-        import termios, sys
-        fd = sys.stdin.fileno()
-        old = termios.tcgetattr(fd)
-        new = termios.tcgetattr(fd)
-        new[3] = new[3] & ~termios.ECHO
-        try:
-            termios.tcsetattr(fd, termios.TCSADRAIN, new)
-            password = raw_input('Password: ')
-            print
-        finally:
-            termios.tcsetattr(fd, termios.TCSADRAIN, old)
-    except ImportError:
-        print 'Error hiding keystrokes; your password will be visible'
-        password = raw_input('Password: ')
+    password = getpass.getpass('Password: ')
     fs = create_proxy()
     fs.login(username, password)
     return fs
