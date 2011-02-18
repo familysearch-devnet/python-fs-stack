@@ -186,3 +186,4 @@ class FamilySearch(object):
 
 import identity_v2
 import familytree_v2
+import authorities_v1

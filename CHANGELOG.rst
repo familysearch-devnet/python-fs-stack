@@ -5,6 +5,7 @@
 0.2
 ---
 
+* Supports Authorities requests (place, name, date, and culture)
 * Properly sends session ID on first request without needing to call session()
 * Search and Match return a single object instead of a one-item list
 * Supports pickling using any protocol (0-2)
