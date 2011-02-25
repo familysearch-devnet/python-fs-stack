@@ -17,6 +17,7 @@
 ---
 
 - Authorities Read
+- Person Version Read
 - Unit tests
 - Convenience methods to access FamilySearch's data model
 
@@ -26,7 +27,6 @@ Future
 
 - Use persistent HTTP connections instead of a new connection for each request
 - Ensure Python 3 compatibility
-- Person Version Read
 - Person Update
 - Relationship Read
 - Relationship Update

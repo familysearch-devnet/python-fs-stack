@@ -57,6 +57,22 @@ class FamilyTreeV2(object):
         else:
             return response
 
+    def version(self, person_id):
+        """
+        Read the latest version of a person or list of persons from the family tree.
+        """
+        if isinstance(person_id, list):
+            person_id = ','.join(person_id)
+        url = self.familytree_base + 'version'
+        if person_id:
+            url = self._add_subpath(url, person_id)
+        response = json.load(self._request(url))['versions']
+        response = self._remove_nones(response)
+        if len(response) == 1:
+            return response[0]
+        else:
+            return response
+
     def pedigree(self, person_id=None, options={}, **kw_options):
         """
         Get a pedigree for the given person or list of persons from the family tree.

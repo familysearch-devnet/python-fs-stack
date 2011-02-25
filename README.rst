@@ -106,6 +106,12 @@ pass additional parameters to the API, simply pass them as named arguments::
 
   print fs.person(['ABCD-123', 'EFGH-456'], events='all', children='all')
 
+Print the latest version of a list of persons (this request is more lightweight
+than a full person request, so it supports more IDs at once)::
+
+  for person in fs.version(['ABCD-123', 'EFGH-456']):
+      print person['id'], person['version']
+
 Print current user's pedigree::
 
   print fs.pedigree()
