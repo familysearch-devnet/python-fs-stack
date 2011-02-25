@@ -112,6 +112,10 @@ than a full person request, so it supports more IDs at once)::
   for person in fs.version(['ABCD-123', 'EFGH-456']):
       print person['id'], person['version']
 
+Print the contents of a persona::
+
+  print fs.persona('ABCD-123')
+
 Print current user's pedigree::
 
   print fs.pedigree()

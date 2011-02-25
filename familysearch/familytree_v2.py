@@ -57,6 +57,24 @@ class FamilyTreeV2(object):
         else:
             return response
 
+    def persona(self, persona_id, options={}, **kw_options):
+        """
+        Get a representation of a persona or list of personas from the family tree.
+        """
+        if isinstance(persona_id, list):
+            persona_id = ','.join(persona_id)
+        url = self.familytree_base + 'persona'
+        if persona_id:
+            url = self._add_subpath(url, persona_id)
+        if options or kw_options:
+            url = self._add_query_params(url, options, **kw_options)
+        response = json.load(self._request(url))['personas']
+        response = self._remove_nones(response)
+        if len(response) == 1:
+            return response[0]
+        else:
+            return response
+
     def version(self, person_id):
         """
         Read the latest version of a person or list of persons from the family tree.

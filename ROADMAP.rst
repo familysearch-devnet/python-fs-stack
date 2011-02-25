@@ -18,6 +18,7 @@
 
 - Authorities Read
 - Person Version Read
+- Persona Read
 - Unit tests
 - Convenience methods to access FamilySearch's data model
 
@@ -30,7 +31,6 @@ Future
 - Person Update
 - Relationship Read
 - Relationship Update
-- Persona Read
 - Person Combine
 - Persona Separate
 - User Read
