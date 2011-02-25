@@ -79,10 +79,18 @@ class FamilySearch(object):
     request_token -- get an OAuth request token
     authorize -- construct OAuth authorization URL
     access_token -- get an OAuth access token (to complete the login process)
+
     person -- get a person or list of persons from the family tree
+    persona -- get a persona or list of personas from the family tree
+    version -- get the latest version number of a person from the family tree
     pedigree -- get the pedigree of a person or list of persons
     search -- search for persons in the family tree
     match -- search for possible duplicates in the family tree
+
+    place -- standardize a place name
+    name -- standardize a person name
+    date -- standardize a date
+    culture -- look up culture IDs
 
     Public attributes:
 
