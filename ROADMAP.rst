@@ -16,6 +16,7 @@
 0.2
 ---
 
+- Authorities Read
 - Unit tests
 - Convenience methods to access FamilySearch's data model
 
