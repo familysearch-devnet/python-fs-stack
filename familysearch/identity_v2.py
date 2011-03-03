@@ -184,6 +184,8 @@ class IdentityV2(object):
                                              oauth_token=request_token,
                                              oauth_verifier=verifier)
         response = dict(urlparse.parse_qsl(oauth_response.read()))
+        if self.session_id in self.oauth_secrets:
+            del self.oauth_secrets[self.session_id]
         self.session_id = response['oauth_token']
         self.logged_in = True
         return response
