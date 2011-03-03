@@ -125,18 +125,23 @@ class FamilySearch(object):
 
     def __getstate__(self):
         """
-        Return a dict containing the state necessary to pickle this instance.
+        Return a tuple containing the state necessary to pickle this instance.
         """
-        return {'agent': ' '.join(self.agent.split(' ')[:-1]),
-                'key': self.key,
-                'session': self.session_id,
-                'base': self.base}
+        return ({'agent': ' '.join(self.agent.split(' ')[:-1]),
+                 'key': self.key,
+                 'session': self.session_id,
+                 'base': self.base},
+                dict([(session, secret)
+                      for (session, secret)
+                      in self.oauth_secrets.iteritems()
+                      if session == self.session_id]))
 
     def __setstate__(self, state):
         """
         Restore the saved state obtained from unpickling this instance.
         """
-        self.__init__(**state)
+        self.__init__(**state[0])
+        self.oauth_secrets = state[1]
 
     def _request(self, url, data=None):
         """
