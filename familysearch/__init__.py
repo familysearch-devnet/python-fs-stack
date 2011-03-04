@@ -8,19 +8,19 @@ Example usage:
 
 from familysearch import FamilySearch
 
-# Log in immediately
+# Log in immediately with Basic Authentication
 fs = FamilySearch('ClientApp/1.0', 'developer_key', 'username', 'password')
 
-# Log in in a separate step
+# Log in in a separate step with Basic Authentication
 fs = FamilySearch('ClientApp/1.0', 'developer_key')
 fs.login('username', 'password')
 
-# Log in in two steps
+# Log in in two steps with Basic Authentication
 fs = FamilySearch('ClientApp/1.0', 'developer_key')
 fs.initialize()
 fs.authenticate('username', 'password')
 
-# Restore a previous session
+# Resume a previous session
 fs = FamilySearch('ClientApp/1.0', 'developer_key', session='session_id')
 
 # Use the production system instead of the reference system
@@ -41,11 +41,30 @@ fs.session()
 # Log out
 fs.logout()
 
-# Print current user's family tree details
-print fs.person()
+# Retrieve current user's family tree details
+me = fs.person()
 
-# Print current user's pedigree
-print fs.pedigree()
+# Retrieve family tree details for a person or several persons
+person = fs.person('ABCD-123')
+persons = fs.person(['ABCD-123', 'EFGH-456'])
+
+# Retrieve family tree details for a list of persons, specifying parameters
+persons = fs.person(['ABCD-123', 'EFGH-456'], events='all', children='all')
+
+# Retrieve current user's pedigree
+pedigree =  fs.pedigree()
+
+# Search for a male named John Smith and retrieve the second page
+results = fs.search(givenName='John', familyName='Smith', gender='Male', maxResults=10)
+more_results = fs.search(contextId=results[0]['contextId'], maxResults=10, startIndex=10)
+
+# Search for possible duplicates of a person
+matches = fs.match('ABCD-123')
+
+# Compute match score between two persons
+match = fs.match('ABCD-123', id='EFGH-456')
+
+# For more examples, see README.rst
 """
 
 import urllib
