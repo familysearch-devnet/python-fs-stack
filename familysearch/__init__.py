@@ -161,6 +161,8 @@ class FamilySearch(object):
         """
         self.__init__(**state[0])
         self.oauth_secrets = state[1]
+        if self.session_id in self.oauth_secrets:
+            self.logged_in = False
 
     def _request(self, url, data=None):
         """
