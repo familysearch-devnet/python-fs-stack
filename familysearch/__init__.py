@@ -57,7 +57,7 @@ if not hasattr(urlparse, 'parse_qs'):
     import cgi
     urlparse.parse_qs = cgi.parse_qs
 
-__version__ = '0.1'
+__version__ = '0.2pre'
 
 
 class object(object): pass

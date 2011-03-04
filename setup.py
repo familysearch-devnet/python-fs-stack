@@ -1,8 +1,9 @@
+import familysearch
 from distutils.core import setup
 
 setup(
     name='python-fs-stack',
-    version='0.2pre',
+    version=familysearch.__version__,
     description='Python wrapper for all FamilySearch APIs',
     long_description=open('README.rst').read(),
     url='https://devnet.familysearch.org/downloads/sample-code',
