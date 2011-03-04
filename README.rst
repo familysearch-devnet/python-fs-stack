@@ -148,15 +148,15 @@ Searching for Possible Duplicates
 
 Search for possible duplicates of a person::
 
-  results = fs.match('ABCD-123')
+  matches = fs.match('ABCD-123')
 
 Compute match score between two persons::
 
-  results = fs.match('ABCD-123', id='EFGH-456')
+  match = fs.match('ABCD-123', id='EFGH-456')
 
 Search for possible duplicates matching specified parameters::
 
-  results = fs.match(givenName='John', familyName='Smith', gender='Male', birthDate='1900', birthPlace='USA', deathDate='1950', deathPlace='USA')
+  matches = fs.match(givenName='John', familyName='Smith', gender='Male', birthDate='1900', birthPlace='USA', deathDate='1950', deathPlace='USA')
 
 
 Standardizing Places, Names, and Dates
@@ -164,32 +164,32 @@ Standardizing Places, Names, and Dates
 
 Look up a place by name::
 
-  results = fs.place(place='paris')
+  place = fs.place(place='paris')
 
 Look up a place by ID::
 
-  results = fs.place(5061509)
+  place = fs.place(5061509)
 
 Look up a list of places by ID::
 
-  results = fs.place([5061509, 5061446])
+  places = fs.place([5061509, 5061446])
 
 Look up a place by name, showing only the most likely result, returning results in another locale::
 
-  results = fs.place(place='germany', filter=True, locale='de')
+  place = fs.place(place='germany', filter=True, locale='de')
 
 Standardize a name::
 
-  results = fs.name('John Smith')
+  name = fs.name('John Smith')
 
 Standardize a list of names::
 
-  results = fs.name(['John Smith', 'Jane Doe'])
+  names = fs.name(['John Smith', 'Jane Doe'])
 
 Standardize a date::
 
-  results = fs.date('1-1-11')
+  date = fs.date('1-1-11')
 
 Standardize a list of dates::
 
-  results = fs.date(['1-1-11', 'december 31 1999'])
+  dates = fs.date(['1-1-11', 'december 31 1999'])
