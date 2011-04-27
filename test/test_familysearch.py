@@ -54,7 +54,7 @@ class TestFamilySearch(unittest.TestCase):
         self.add_request_intercept(sample_person1, host='www.dev.usys.org', port=80)
         self.add_request_intercept(sample_person2, host='api.familysearch.org', port=443)
         fs_dev = familysearch.FamilySearch(self.agent, self.key)
-        fs_prod = familysearch.FamilySearch(self.agent, self.key, base='https://api.familysearch.org')
+        fs_prod = familysearch.FamilySearch(self.agent, self.key, base='https://api.familysearch.org:443')
         self.install_intercept_handler(fs_dev)
         self.install_intercept_handler(fs_prod)
         person1 = fs_dev.person()
@@ -65,7 +65,7 @@ class TestFamilySearch(unittest.TestCase):
 
     def test_include_user_agent(self):
         request_environ = self.add_request_intercept(sample_person1)
-        fs = familysearch.FamilySearch(self.agent, self.key, base='https://api.familysearch.org')
+        fs = familysearch.FamilySearch(self.agent, self.key, base='https://api.familysearch.org:443')
         self.install_intercept_handler(fs)
         fs.person()
         self.assertIn(self.agent, fs.agent, 'user agent not included in internal user agent')
