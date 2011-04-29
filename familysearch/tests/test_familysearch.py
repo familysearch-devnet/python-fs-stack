@@ -5,9 +5,14 @@ import wsgi_intercept
 import os.path
 from wsgi_intercept.urllib2_intercept import WSGI_HTTPHandler, WSGI_HTTPSHandler
 
-data_dir = os.path.dirname(__file__)
-sample_person1 = open(os.path.join(data_dir, 'person1.json')).read()
-sample_person2 = open(os.path.join(data_dir, 'person2.json')).read()
+try:
+    import pkg_resources
+    sample_person1 = pkg_resources.resource_string(__name__, 'person1.json')
+    sample_person2 = pkg_resources.resource_string(__name__, 'person2.json')
+except ImportError:
+    data_dir = os.path.dirname(__file__)
+    sample_person1 = open(os.path.join(data_dir, 'person1.json')).read()
+    sample_person2 = open(os.path.join(data_dir, 'person2.json')).read()
 
 class TestFamilySearch(unittest.TestCase):
 
