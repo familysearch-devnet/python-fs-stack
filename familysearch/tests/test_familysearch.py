@@ -68,7 +68,7 @@ class TestFamilySearch(unittest.TestCase):
         self.assertEqual(person1['id'], 'ABCD-123', 'wrong person returned from default base')
         self.assertEqual(person2['id'], 'EFGH-456', 'wrong person returned from production base')
 
-    def test_include_user_agent(self):
+    def test_includes_user_agent(self):
         request_environ = self.add_request_intercept(sample_person1)
         fs = familysearch.FamilySearch(self.agent, self.key, base='https://api.familysearch.org:443')
         self.install_intercept_handler(fs)
