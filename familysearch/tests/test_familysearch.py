@@ -1,8 +1,8 @@
 import familysearch
+import os.path
 import unittest
 import urllib2
 import wsgi_intercept
-import os.path
 from wsgi_intercept.urllib2_intercept import WSGI_HTTPHandler, WSGI_HTTPSHandler
 
 try:
