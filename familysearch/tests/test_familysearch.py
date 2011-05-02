@@ -4,6 +4,10 @@ import unittest
 import urllib2
 import wsgi_intercept
 from wsgi_intercept.urllib2_intercept import WSGI_HTTPHandler, WSGI_HTTPSHandler
+try:
+    import json
+except ImportError:
+    import simplejson as json
 
 try:
     import pkg_resources
@@ -65,8 +69,8 @@ class TestFamilySearch(unittest.TestCase):
         person1 = fs_dev.person()
         person2 = fs_prod.person()
         self.assertNotEqual(person1, person2, 'base argument failed to change base URL')
-        self.assertEqual(person1['id'], 'ABCD-123', 'wrong person returned from default base')
-        self.assertEqual(person2['id'], 'EFGH-456', 'wrong person returned from production base')
+        self.assertEqual(person1['id'], json.loads(sample_person1)['persons'][0]['id'], 'wrong person returned from default base')
+        self.assertEqual(person2['id'], json.loads(sample_person2)['persons'][0]['id'], 'wrong person returned from production base')
 
     def test_includes_user_agent(self):
         request_environ = self.add_request_intercept(sample_person1)
