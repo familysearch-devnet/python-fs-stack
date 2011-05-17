@@ -24,6 +24,7 @@ class TestFamilySearch(unittest.TestCase):
         self.longMessage = True
         self.agent = 'TEST_USER_AGENT'
         self.key = 'FAKE_DEV_KEY'
+        self.session = 'FAKE_SESSION_ID'
 
     def tearDown(self):
         self.clear_request_intercpets()
@@ -80,6 +81,12 @@ class TestFamilySearch(unittest.TestCase):
         self.assertIn(self.agent, fs.agent, 'user agent not included in internal user agent')
         self.assertIn('HTTP_USER_AGENT', request_environ, 'user agent header not included in request')
         self.assertIn(self.agent, request_environ['HTTP_USER_AGENT'], 'user agent not included in user agent header')
+
+    def test_restoring_session_sets_logged_in(self):
+        fs = familysearch.FamilySearch(self.agent, self.key)
+        self.assertFalse(fs.logged_in, 'should not be logged in by default')
+        fs = familysearch.FamilySearch(self.agent, self.key, session=self.session)
+        self.assertTrue(fs.logged_in, 'should be logged in after restoring session')
 
 if __name__ == '__main__':
     unittest.main()
