@@ -13,10 +13,12 @@ try:
     import pkg_resources
     sample_person1 = pkg_resources.resource_string(__name__, 'person1.json')
     sample_person2 = pkg_resources.resource_string(__name__, 'person2.json')
+    sample_login = pkg_resources.resource_string(__name__, 'login.json')
 except ImportError:
     data_dir = os.path.dirname(__file__)
     sample_person1 = open(os.path.join(data_dir, 'person1.json')).read()
     sample_person2 = open(os.path.join(data_dir, 'person2.json')).read()
+    sample_login = open(os.path.join(data_dir, 'login.json')).read()
 
 class TestFamilySearch(unittest.TestCase):
 
@@ -32,6 +34,8 @@ class TestFamilySearch(unittest.TestCase):
         self.agent = 'TEST_USER_AGENT'
         self.key = 'FAKE_DEV_KEY'
         self.session = 'FAKE_SESSION_ID'
+        self.username = 'FAKE_USERNAME'
+        self.password = 'FAKE_PASSWORD'
 
     def tearDown(self):
         self.clear_request_intercpets()
@@ -87,6 +91,11 @@ class TestFamilySearch(unittest.TestCase):
         self.assertFalse(fs.logged_in, 'should not be logged in by default')
         fs = familysearch.FamilySearch(self.agent, self.key, session=self.session)
         self.assertTrue(fs.logged_in, 'should be logged in after restoring session')
+
+    def test_username_and_password_set_logged_in(self):
+        self.add_request_intercept(sample_login)
+        fs = familysearch.FamilySearch(self.agent, self.key, self.username, self.password)
+        self.assertTrue(fs.logged_in, 'should be logged in after providing username and password')
 
 if __name__ == '__main__':
     unittest.main()
