@@ -21,6 +21,13 @@ except ImportError:
 class TestFamilySearch(unittest.TestCase):
 
     def setUp(self):
+        # Monkeypatch urllib2 to install WSGI intercept handlers
+        self._orig_build_opener = urllib2.build_opener
+        if WSGI_HTTPSHandler is None:
+            urllib2.build_opener = lambda *h: self._orig_build_opener(WSGI_HTTPHandler, *h)
+        else:
+            urllib2.build_opener = lambda *h: self._orig_build_opener(WSGI_HTTPHandler, WSGI_HTTPSHandler, *h)
+
         self.longMessage = True
         self.agent = 'TEST_USER_AGENT'
         self.key = 'FAKE_DEV_KEY'
@@ -28,6 +35,7 @@ class TestFamilySearch(unittest.TestCase):
 
     def tearDown(self):
         self.clear_request_intercpets()
+        urllib2.build_opener = self._orig_build_opener
 
     def add_request_intercept(self, response, out_environ=None, status='200 OK',
                               host='api.familysearch.org', port=443,
@@ -46,11 +54,6 @@ class TestFamilySearch(unittest.TestCase):
         '''Remove all installed request intercepts.'''
         wsgi_intercept.remove_wsgi_intercept()
 
-    def install_intercept_handler(self, fs):
-        '''Add the request intercept handler to the given FamilySearch instance.'''
-        new_handlers = [WSGI_HTTPHandler(), WSGI_HTTPSHandler()] + fs.opener.handlers
-        fs.opener = urllib2.build_opener(*new_handlers)
-
     def test_requires_user_agent(self):
         self.assertRaises(TypeError, familysearch.FamilySearch, key=self.key)
 
@@ -65,8 +68,6 @@ class TestFamilySearch(unittest.TestCase):
         self.add_request_intercept(sample_person2, host='api.familysearch.org', port=443)
         fs_dev = familysearch.FamilySearch(self.agent, self.key)
         fs_prod = familysearch.FamilySearch(self.agent, self.key, base='https://api.familysearch.org:443')
-        self.install_intercept_handler(fs_dev)
-        self.install_intercept_handler(fs_prod)
         person1 = fs_dev.person()
         person2 = fs_prod.person()
         self.assertNotEqual(person1, person2, 'base argument failed to change base URL')
@@ -76,7 +77,6 @@ class TestFamilySearch(unittest.TestCase):
     def test_includes_user_agent(self):
         request_environ = self.add_request_intercept(sample_person1)
         fs = familysearch.FamilySearch(self.agent, self.key, base='https://api.familysearch.org:443')
-        self.install_intercept_handler(fs)
         fs.person()
         self.assertIn(self.agent, fs.agent, 'user agent not included in internal user agent')
         self.assertIn('HTTP_USER_AGENT', request_environ, 'user agent header not included in request')
