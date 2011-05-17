@@ -97,5 +97,12 @@ class TestFamilySearch(unittest.TestCase):
         fs = familysearch.FamilySearch(self.agent, self.key, self.username, self.password)
         self.assertTrue(fs.logged_in, 'should be logged in after providing username and password')
 
+    def test_requests_json_format(self):
+        request_environ = self.add_request_intercept(sample_person1)
+        fs = familysearch.FamilySearch(self.agent, self.key, session=self.session)
+        fs.person()
+        self.assertIn('QUERY_STRING', request_environ, 'query string not included in request')
+        self.assertIn('dataFormat=application%2Fjson', request_environ['QUERY_STRING'], 'dataFormat not included in query string')
+
 if __name__ == '__main__':
     unittest.main()
