@@ -38,7 +38,7 @@ class TestFamilySearch(unittest.TestCase):
         urllib2.build_opener = self._orig_build_opener
 
     def add_request_intercept(self, response, out_environ=None, status='200 OK',
-                              host='api.familysearch.org', port=443,
+                              host='www.dev.usys.org', port=80,
                               headers={'Content-Type': 'application/json'}):
         '''Globally install a request intercept returning the provided response.'''
         if out_environ is None:
@@ -76,7 +76,7 @@ class TestFamilySearch(unittest.TestCase):
 
     def test_includes_user_agent(self):
         request_environ = self.add_request_intercept(sample_person1)
-        fs = familysearch.FamilySearch(self.agent, self.key, base='https://api.familysearch.org:443')
+        fs = familysearch.FamilySearch(self.agent, self.key)
         fs.person()
         self.assertIn(self.agent, fs.agent, 'user agent not included in internal user agent')
         self.assertIn('HTTP_USER_AGENT', request_environ, 'user agent header not included in request')
