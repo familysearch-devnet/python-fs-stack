@@ -104,5 +104,12 @@ class TestFamilySearch(unittest.TestCase):
         self.assertIn('QUERY_STRING', request_environ, 'query string not included in request')
         self.assertIn('dataFormat=application%2Fjson', request_environ['QUERY_STRING'], 'dataFormat not included in query string')
 
+    def test_not_logged_in_if_error_401(self):
+        self.add_request_intercept('', status='401 Unauthorized')
+        fs = familysearch.FamilySearch(self.agent, self.key, session=self.session)
+        self.assertTrue(fs.logged_in, 'should be logged in after restoring session')
+        self.assertRaises(urllib2.HTTPError, fs.person)
+        self.assertFalse(fs.logged_in, 'should not be logged after receiving error 401')
+
 if __name__ == '__main__':
     unittest.main()
