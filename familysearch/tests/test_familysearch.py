@@ -65,7 +65,7 @@ class TestFamilySearch(unittest.TestCase):
         self.add_request_intercept(sample_person1, host='www.dev.usys.org', port=80)
         self.add_request_intercept(sample_person2, host='api.familysearch.org', port=443)
         fs_dev = familysearch.FamilySearch(self.agent, self.key)
-        fs_prod = familysearch.FamilySearch(self.agent, self.key, base='https://api.familysearch.org:443')
+        fs_prod = familysearch.FamilySearch(self.agent, self.key, base='https://api.familysearch.org')
         person1 = fs_dev.person()
         person2 = fs_prod.person()
         self.assertNotEqual(person1, person2, 'base argument failed to change base URL')
