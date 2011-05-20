@@ -22,6 +22,8 @@ except ImportError:
 
 class TestFamilySearch(unittest.TestCase):
 
+    default_headers = {'Content-Type': 'application/json'}
+
     def setUp(self):
         self.longMessage = True
         self.agent = 'TEST_USER_AGENT'
@@ -37,7 +39,7 @@ class TestFamilySearch(unittest.TestCase):
 
     def add_request_intercept(self, response, out_environ=None, status='200 OK',
                               host='www.dev.usys.org', port=80,
-                              headers={'Content-Type': 'application/json'}):
+                              headers=default_headers):
         '''Globally install a request intercept returning the provided response.'''
         if out_environ is None:
             out_environ = {}
