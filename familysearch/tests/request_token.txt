@@ -1,0 +1,1 @@
+oauth_token=FAKE_TEMP_TOKEN&oauth_token_secret=FAKE_SECRET&oauth_callback_confirmed=true

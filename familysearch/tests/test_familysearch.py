@@ -1,4 +1,5 @@
 import familysearch
+import pickle
 import unittest
 import urllib2
 import wsgi_intercept.httplib_intercept
@@ -18,6 +19,8 @@ class TestFamilySearch(unittest.TestCase):
         self.username = 'FAKE_USERNAME'
         self.password = 'FAKE_PASSWORD'
         self.cookie = 'FAKE_COOKIE=FAKE_VALUE'
+        self.oauth_temp_token = 'FAKE_TEMP_TOKEN'
+        self.oauth_secret = 'FAKE_SECRET'
         wsgi_intercept.httplib_intercept.install()
 
     def tearDown(self):
@@ -91,6 +94,38 @@ class TestFamilySearch(unittest.TestCase):
         fs.person()
         self.assertIn('HTTP_COOKIE', request_environ, 'cookie header not included in request')
         self.assertIn(self.cookie, request_environ['HTTP_COOKIE'], 'previously-set cookie not included in cookie header')
+
+    def test_pickle_restores_logged_out_session(self):
+        fs_logged_out = familysearch.FamilySearch(self.agent, self.key, base='https://api.familysearch.org')
+        fs_logged_out_restored = pickle.loads(pickle.dumps(fs_logged_out))
+        self.assertEqual(fs_logged_out.agent, fs_logged_out_restored.agent, 'user agent not restored properly')
+        self.assertEqual(fs_logged_out.key, fs_logged_out_restored.key, 'developer key not restored properly')
+        self.assertEqual(fs_logged_out.session_id, fs_logged_out_restored.session_id, 'session ID not restored properly')
+        self.assertEqual(fs_logged_out_restored.logged_in, False, 'logged-in flag not restored properly')
+        self.assertEqual(fs_logged_out.base, fs_logged_out_restored.base, 'base URL not restored properly')
+
+    def test_pickle_restores_logged_in_session(self):
+        fs_logged_in = familysearch.FamilySearch(self.agent, self.key, base='https://api.familysearch.org', session=self.session)
+        fs_logged_in_restored = pickle.loads(pickle.dumps(fs_logged_in))
+        self.assertEqual(fs_logged_in.agent, fs_logged_in_restored.agent, 'user agent not restored properly')
+        self.assertEqual(fs_logged_in.key, fs_logged_in_restored.key, 'developer key not restored properly')
+        self.assertEqual(fs_logged_in.session_id, fs_logged_in_restored.session_id, 'session ID not restored properly')
+        self.assertEqual(fs_logged_in_restored.logged_in, True, 'logged-in flag not restored properly')
+        self.assertEqual(fs_logged_in.base, fs_logged_in_restored.base, 'base URL not restored properly')
+
+    def test_pickle_restores_oauth_temporary_credentials(self):
+        add_request_intercept(sample_identity_properties)
+        add_request_intercept(sample_request_token, port=1, headers={'Content-type': 'text/plain'})
+        fs_oauth = familysearch.FamilySearch(self.agent, self.key)
+        fs_oauth.request_token()
+        fs_oauth_restored = pickle.loads(pickle.dumps(fs_oauth))
+        self.assertEqual(fs_oauth.agent, fs_oauth_restored.agent, 'user agent not restored properly')
+        self.assertEqual(fs_oauth.key, fs_oauth_restored.key, 'developer key not restored properly')
+        self.assertEqual(fs_oauth.session_id, fs_oauth_restored.session_id, 'session ID not restored properly')
+        self.assertEqual(fs_oauth_restored.logged_in, False, 'logged-in flag not restored properly')
+        self.assertEqual(fs_oauth.base, fs_oauth_restored.base, 'base URL not restored properly')
+        self.assertIn(self.oauth_temp_token, fs_oauth_restored.oauth_secrets, 'OAuth temporary credentials identifier not restored properly')
+        self.assertEqual(fs_oauth_restored.oauth_secrets[self.oauth_temp_token], self.oauth_secret, 'OAuth temporary credentials shared-secret not restored properly')
 
 if __name__ == '__main__':
     unittest.main()
