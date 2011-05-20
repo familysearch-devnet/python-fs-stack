@@ -3,7 +3,7 @@ import os.path
 import unittest
 import urllib2
 import wsgi_intercept
-from wsgi_intercept.urllib2_intercept import WSGI_HTTPHandler, WSGI_HTTPSHandler
+import wsgi_intercept.httplib_intercept
 try:
     import json
 except ImportError:
@@ -23,23 +23,17 @@ except ImportError:
 class TestFamilySearch(unittest.TestCase):
 
     def setUp(self):
-        # Monkeypatch urllib2 to install WSGI intercept handlers
-        self._orig_build_opener = urllib2.build_opener
-        if WSGI_HTTPSHandler is None:
-            urllib2.build_opener = lambda *h: self._orig_build_opener(WSGI_HTTPHandler, *h)
-        else:
-            urllib2.build_opener = lambda *h: self._orig_build_opener(WSGI_HTTPHandler, WSGI_HTTPSHandler, *h)
-
         self.longMessage = True
         self.agent = 'TEST_USER_AGENT'
         self.key = 'FAKE_DEV_KEY'
         self.session = 'FAKE_SESSION_ID'
         self.username = 'FAKE_USERNAME'
         self.password = 'FAKE_PASSWORD'
+        wsgi_intercept.httplib_intercept.install()
 
     def tearDown(self):
         self.clear_request_intercpets()
-        urllib2.build_opener = self._orig_build_opener
+        wsgi_intercept.httplib_intercept.uninstall()
 
     def add_request_intercept(self, response, out_environ=None, status='200 OK',
                               host='www.dev.usys.org', port=80,
