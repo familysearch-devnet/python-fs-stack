@@ -31,6 +31,7 @@ class TestFamilySearch(unittest.TestCase):
         self.session = 'FAKE_SESSION_ID'
         self.username = 'FAKE_USERNAME'
         self.password = 'FAKE_PASSWORD'
+        self.cookie = 'FAKE_COOKIE=FAKE_VALUE'
         wsgi_intercept.httplib_intercept.install()
 
     def tearDown(self):
@@ -106,6 +107,21 @@ class TestFamilySearch(unittest.TestCase):
         self.assertTrue(fs.logged_in, 'should be logged in after restoring session')
         self.assertRaises(urllib2.HTTPError, fs.person)
         self.assertFalse(fs.logged_in, 'should not be logged after receiving error 401')
+
+    def test_passes_cookies_back(self):
+        fs = familysearch.FamilySearch(self.agent, self.key)
+
+        # First request sets a cookie
+        headers = self.default_headers.copy()
+        headers['Set-Cookie'] = self.cookie + '; Path=/'
+        self.add_request_intercept(sample_login, headers=headers)
+        fs.login(self.username, self.password)
+
+        # Second request should receive the cookie back
+        request_environ = self.add_request_intercept(sample_person1)
+        fs.person()
+        self.assertIn('HTTP_COOKIE', request_environ, 'cookie header not included in request')
+        self.assertIn(self.cookie, request_environ['HTTP_COOKIE'], 'previously-set cookie not included in cookie header')
 
 if __name__ == '__main__':
     unittest.main()
