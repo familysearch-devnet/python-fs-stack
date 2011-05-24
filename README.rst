@@ -17,8 +17,10 @@ Dependencies
 
 - Python 2.5 or later
 - simplejson_, if using Python older than 2.6
+- wsgi_intercept_ 0.5.0 or later (only required to run test suite)
 
 .. _simplejson: http://pypi.python.org/pypi/simplejson
+.. _wsgi_intercept: http://pypi.python.org/pypi/wsgi_intercept
 
 
 Installation
