@@ -154,5 +154,45 @@ class TestFamilyTreePersona(TestFamilyTree):
         self.assertIn('parents=all', request_environ['QUERY_STRING'], 'one of multiple query parameters not included')
 
 
+class TestFamilyTreeVersion(TestFamilyTree):
+
+    def test_does_not_accept_no_arguments(self):
+        add_request_intercept(sample_version1)
+        self.assertRaises(TypeError, self.fs.version)
+
+    def test_does_not_accept_me_version(self):
+        request_environ = add_request_intercept(sample_version1)
+        self.fs.version('me')
+        self.assertFalse(request_environ['PATH_INFO'].endswith('version'), 'person version request should not handle "me" specially')
+
+    def test_accepts_single_person(self):
+        request_environ = add_request_intercept(sample_version1)
+        self.fs.version(self.id)
+        self.assertTrue(request_environ['PATH_INFO'].endswith('version/' + self.id), 'incorrect person version request with single person ID')
+
+    def test_accepts_list_of_persons(self):
+        request_environ = add_request_intercept(sample_version_list)
+        self.fs.version([self.id, self.id2])
+        self.assertTrue(request_environ['PATH_INFO'].endswith('version/' + self.id + ',' + self.id2), 'incorrect person version request with list of person IDs')
+
+    def test_single_returns_single(self):
+        add_request_intercept(sample_version1)
+        version = self.fs.version(self.id)
+        self.assertEqual(type(version), dict, 'single person version response is wrong type')
+
+    def test_list_returns_list(self):
+        add_request_intercept(sample_version_list)
+        version_list = self.fs.version([self.id, self.id2])
+        self.assertEqual(type(version_list), list, 'multiple person version response is not a list')
+
+    def test_does_not_add_accept_kwargs(self):
+        add_request_intercept(sample_version1)
+        self.assertRaises(TypeError, self.fs.version, self.id, names='all')
+
+    def test_does_not_accept_options_dict(self):
+        add_request_intercept(sample_version1)
+        self.assertRaises(TypeError, self.fs.version, self.id, {'names': 'all'})
+
+
 if __name__ == '__main__':
     unittest.main()
