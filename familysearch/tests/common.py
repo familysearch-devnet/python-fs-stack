@@ -14,6 +14,7 @@ except ImportError:
 
 sample_person1 = load_sample('person1.json')
 sample_person2 = load_sample('person2.json')
+sample_person_list = load_sample('person_list.json')
 sample_login = load_sample('login.json')
 sample_identity_properties = load_sample('identity_properties.json')
 sample_request_token = load_sample('request_token.txt')

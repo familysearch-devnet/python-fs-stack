@@ -9,6 +9,7 @@ except ImportError:
     import simplejson as json
 from common import *
 
+
 class TestFamilySearch(unittest.TestCase):
 
     def setUp(self):
@@ -126,6 +127,7 @@ class TestFamilySearch(unittest.TestCase):
         self.assertEqual(fs_oauth.base, fs_oauth_restored.base, 'base URL not restored properly')
         self.assertIn(self.oauth_temp_token, fs_oauth_restored.oauth_secrets, 'OAuth temporary credentials identifier not restored properly')
         self.assertEqual(fs_oauth_restored.oauth_secrets[self.oauth_temp_token], self.oauth_secret, 'OAuth temporary credentials shared-secret not restored properly')
+
 
 if __name__ == '__main__':
     unittest.main()
