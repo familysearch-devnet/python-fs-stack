@@ -1,0 +1,1 @@
+{"pedigrees":[{"requestedId":"ABCD-123","persons":[{"assertions":{"names":[{"value":{"forms":[{"fullText":"John Smith"}]}}],"genders":[{"value":{"type":"Male"}}]},"id":"ABCD-123","version":"498216796184"}],"id":"ABCD-123"}],"version":"2.7.20110406.1514","statusCode":200,"statusMessage":"OK"}
