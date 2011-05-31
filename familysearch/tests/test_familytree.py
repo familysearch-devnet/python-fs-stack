@@ -90,5 +90,69 @@ class TestFamilyTreePerson(TestFamilyTree):
         self.assertIn('parents=all', request_environ['QUERY_STRING'], 'one of multiple query parameters not included')
 
 
+class TestFamilyTreePersona(TestFamilyTree):
+
+    def test_does_not_accept_no_arguments(self):
+        add_request_intercept(sample_persona1)
+        self.assertRaises(TypeError, self.fs.persona)
+
+    def test_does_not_accept_me_persona(self):
+        request_environ = add_request_intercept(sample_persona1)
+        self.fs.persona('me')
+        self.assertFalse(request_environ['PATH_INFO'].endswith('persona'), 'persona request should not handle "me" specially')
+
+    def test_accepts_single_persona(self):
+        request_environ = add_request_intercept(sample_persona1)
+        self.fs.persona(self.id)
+        self.assertTrue(request_environ['PATH_INFO'].endswith('persona/' + self.id), 'incorrect persona request with single persona ID')
+
+    def test_accepts_list_of_personas(self):
+        request_environ = add_request_intercept(sample_persona_list)
+        self.fs.persona([self.id, self.id2])
+        self.assertTrue(request_environ['PATH_INFO'].endswith('persona/' + self.id + ',' + self.id2), 'incorrect persona request with list of persona IDs')
+
+    def test_single_returns_single(self):
+        add_request_intercept(sample_persona1)
+        persona = self.fs.persona(self.id)
+        self.assertEqual(type(persona), dict, 'single persona response is wrong type')
+
+    def test_list_returns_list(self):
+        add_request_intercept(sample_persona_list)
+        persona_list = self.fs.persona([self.id, self.id2])
+        self.assertEqual(type(persona_list), list, 'multiple persona response is not a list')
+
+    def test_adds_one_query_param_from_kwargs(self):
+        request_environ = add_request_intercept(sample_persona1)
+        self.fs.persona(self.id, names='all')
+        self.assertIn('names=all', request_environ['QUERY_STRING'], 'single query parameter not included')
+
+    def test_adds_multiple_query_params_from_kwargs(self):
+        request_environ = add_request_intercept(sample_persona1)
+        self.fs.persona(self.id, names='all', genders='all')
+        self.assertIn('names=all', request_environ['QUERY_STRING'], 'one of multiple query parameters not included')
+        self.assertIn('=all&', request_environ['QUERY_STRING'], 'multiple query parameters not separated properly')
+        self.assertIn('genders=all', request_environ['QUERY_STRING'], 'one of multiple query parameters not included')
+
+    def test_adds_one_query_param_from_dict(self):
+        request_environ = add_request_intercept(sample_persona1)
+        self.fs.persona(self.id, {'names': 'all'})
+        self.assertIn('names=all', request_environ['QUERY_STRING'], 'single query parameter not included')
+
+    def test_adds_multiple_query_params_from_dict(self):
+        request_environ = add_request_intercept(sample_persona1)
+        self.fs.persona(self.id, {'names': 'all', 'genders': 'all'})
+        self.assertIn('names=all', request_environ['QUERY_STRING'], 'one of multiple query parameters not included')
+        self.assertIn('=all&', request_environ['QUERY_STRING'], 'multiple query parameters not separated properly')
+        self.assertIn('genders=all', request_environ['QUERY_STRING'], 'one of multiple query parameters not included')
+
+    def test_adds_multiple_query_params_from_kwargs_and_dict(self):
+        request_environ = add_request_intercept(sample_persona1)
+        self.fs.persona(self.id, names='all', genders='all', options={'children': 'all', 'parents': 'all'})
+        self.assertIn('names=all', request_environ['QUERY_STRING'], 'one of multiple query parameters not included')
+        self.assertIn('genders=all', request_environ['QUERY_STRING'], 'one of multiple query parameters not included')
+        self.assertIn('children=all', request_environ['QUERY_STRING'], 'one of multiple query parameters not included')
+        self.assertIn('parents=all', request_environ['QUERY_STRING'], 'one of multiple query parameters not included')
+
+
 if __name__ == '__main__':
     unittest.main()
