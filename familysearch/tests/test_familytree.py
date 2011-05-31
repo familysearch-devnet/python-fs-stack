@@ -56,6 +56,7 @@ class TestFamilyTreePerson(TestFamilyTree):
         add_request_intercept(sample_person_list)
         person_list = self.fs.person([self.id, self.id2])
         self.assertEqual(type(person_list), list, 'multiple person response is not a list')
+        self.assertEqual(len(person_list), 2, 'multiple person response has wrong length')
 
     def test_adds_one_query_param_from_kwargs(self):
         request_environ = add_request_intercept(sample_person1)
@@ -120,6 +121,7 @@ class TestFamilyTreePersona(TestFamilyTree):
         add_request_intercept(sample_persona_list)
         persona_list = self.fs.persona([self.id, self.id2])
         self.assertEqual(type(persona_list), list, 'multiple persona response is not a list')
+        self.assertEqual(len(persona_list), 2, 'multiple persona response has wrong length')
 
     def test_adds_one_query_param_from_kwargs(self):
         request_environ = add_request_intercept(sample_persona1)
@@ -184,6 +186,7 @@ class TestFamilyTreeVersion(TestFamilyTree):
         add_request_intercept(sample_version_list)
         version_list = self.fs.version([self.id, self.id2])
         self.assertEqual(type(version_list), list, 'multiple person version response is not a list')
+        self.assertEqual(len(version_list), 2, 'multiple person version response has wrong length')
 
     def test_does_not_add_accept_kwargs(self):
         add_request_intercept(sample_version1)
@@ -225,6 +228,7 @@ class TestFamilyTreePedigree(TestFamilyTree):
         add_request_intercept(sample_pedigree_list)
         pedigree_list = self.fs.pedigree([self.id, self.id2])
         self.assertEqual(type(pedigree_list), list, 'multiple pedigree response is not a list')
+        self.assertEqual(len(pedigree_list), 2, 'multiple pedigree response has wrong length')
 
     def test_adds_one_numeric_query_param_from_kwargs(self):
         request_environ = add_request_intercept(sample_pedigree1)
