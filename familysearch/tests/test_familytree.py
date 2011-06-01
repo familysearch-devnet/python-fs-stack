@@ -94,16 +94,16 @@ class TestFamilyTreePerson(TestFamilyTree):
 class TestFamilyTreePersona(TestFamilyTree):
 
     def test_does_not_accept_no_arguments(self):
-        add_request_intercept(sample_persona1)
+        add_request_intercept(sample_persona)
         self.assertRaises(TypeError, self.fs.persona)
 
     def test_does_not_accept_me_persona(self):
-        request_environ = add_request_intercept(sample_persona1)
+        request_environ = add_request_intercept(sample_persona)
         self.fs.persona('me')
         self.assertFalse(request_environ['PATH_INFO'].endswith('persona'), 'persona request should not handle "me" specially')
 
     def test_accepts_single_persona(self):
-        request_environ = add_request_intercept(sample_persona1)
+        request_environ = add_request_intercept(sample_persona)
         self.fs.persona(self.id)
         self.assertTrue(request_environ['PATH_INFO'].endswith('persona/' + self.id), 'incorrect persona request with single persona ID')
 
@@ -113,7 +113,7 @@ class TestFamilyTreePersona(TestFamilyTree):
         self.assertTrue(request_environ['PATH_INFO'].endswith('persona/' + self.id + ',' + self.id2), 'incorrect persona request with list of persona IDs')
 
     def test_single_returns_single(self):
-        add_request_intercept(sample_persona1)
+        add_request_intercept(sample_persona)
         persona = self.fs.persona(self.id)
         self.assertEqual(type(persona), dict, 'single persona response is wrong type')
 
@@ -124,31 +124,31 @@ class TestFamilyTreePersona(TestFamilyTree):
         self.assertEqual(len(persona_list), 2, 'multiple persona response has wrong length')
 
     def test_adds_one_query_param_from_kwargs(self):
-        request_environ = add_request_intercept(sample_persona1)
+        request_environ = add_request_intercept(sample_persona)
         self.fs.persona(self.id, names='all')
         self.assertIn('names=all', request_environ['QUERY_STRING'], 'single query parameter not included')
 
     def test_adds_multiple_query_params_from_kwargs(self):
-        request_environ = add_request_intercept(sample_persona1)
+        request_environ = add_request_intercept(sample_persona)
         self.fs.persona(self.id, names='all', genders='all')
         self.assertIn('names=all', request_environ['QUERY_STRING'], 'one of multiple query parameters not included')
         self.assertIn('=all&', request_environ['QUERY_STRING'], 'multiple query parameters not separated properly')
         self.assertIn('genders=all', request_environ['QUERY_STRING'], 'one of multiple query parameters not included')
 
     def test_adds_one_query_param_from_dict(self):
-        request_environ = add_request_intercept(sample_persona1)
+        request_environ = add_request_intercept(sample_persona)
         self.fs.persona(self.id, {'names': 'all'})
         self.assertIn('names=all', request_environ['QUERY_STRING'], 'single query parameter not included')
 
     def test_adds_multiple_query_params_from_dict(self):
-        request_environ = add_request_intercept(sample_persona1)
+        request_environ = add_request_intercept(sample_persona)
         self.fs.persona(self.id, {'names': 'all', 'genders': 'all'})
         self.assertIn('names=all', request_environ['QUERY_STRING'], 'one of multiple query parameters not included')
         self.assertIn('=all&', request_environ['QUERY_STRING'], 'multiple query parameters not separated properly')
         self.assertIn('genders=all', request_environ['QUERY_STRING'], 'one of multiple query parameters not included')
 
     def test_adds_multiple_query_params_from_kwargs_and_dict(self):
-        request_environ = add_request_intercept(sample_persona1)
+        request_environ = add_request_intercept(sample_persona)
         self.fs.persona(self.id, names='all', genders='all', options={'children': 'all', 'parents': 'all'})
         self.assertIn('names=all', request_environ['QUERY_STRING'], 'one of multiple query parameters not included')
         self.assertIn('genders=all', request_environ['QUERY_STRING'], 'one of multiple query parameters not included')
@@ -159,16 +159,16 @@ class TestFamilyTreePersona(TestFamilyTree):
 class TestFamilyTreeVersion(TestFamilyTree):
 
     def test_does_not_accept_no_arguments(self):
-        add_request_intercept(sample_version1)
+        add_request_intercept(sample_version)
         self.assertRaises(TypeError, self.fs.version)
 
     def test_does_not_accept_me_version(self):
-        request_environ = add_request_intercept(sample_version1)
+        request_environ = add_request_intercept(sample_version)
         self.fs.version('me')
         self.assertFalse(request_environ['PATH_INFO'].endswith('version'), 'person version request should not handle "me" specially')
 
     def test_accepts_single_person(self):
-        request_environ = add_request_intercept(sample_version1)
+        request_environ = add_request_intercept(sample_version)
         self.fs.version(self.id)
         self.assertTrue(request_environ['PATH_INFO'].endswith('version/' + self.id), 'incorrect person version request with single person ID')
 
@@ -178,7 +178,7 @@ class TestFamilyTreeVersion(TestFamilyTree):
         self.assertTrue(request_environ['PATH_INFO'].endswith('version/' + self.id + ',' + self.id2), 'incorrect person version request with list of person IDs')
 
     def test_single_returns_single(self):
-        add_request_intercept(sample_version1)
+        add_request_intercept(sample_version)
         version = self.fs.version(self.id)
         self.assertEqual(type(version), dict, 'single person version response is wrong type')
 
@@ -189,28 +189,28 @@ class TestFamilyTreeVersion(TestFamilyTree):
         self.assertEqual(len(version_list), 2, 'multiple person version response has wrong length')
 
     def test_does_not_add_accept_kwargs(self):
-        add_request_intercept(sample_version1)
+        add_request_intercept(sample_version)
         self.assertRaises(TypeError, self.fs.version, self.id, names='all')
 
     def test_does_not_accept_options_dict(self):
-        add_request_intercept(sample_version1)
+        add_request_intercept(sample_version)
         self.assertRaises(TypeError, self.fs.version, self.id, {'names': 'all'})
 
 
 class TestFamilyTreePedigree(TestFamilyTree):
 
     def test_accepts_no_arguments(self):
-        request_environ = add_request_intercept(sample_pedigree1)
+        request_environ = add_request_intercept(sample_pedigree)
         self.fs.pedigree()
         self.assertTrue(request_environ['PATH_INFO'].endswith('pedigree'), 'pedigree request failed without a person ID')
 
     def test_accepts_me_pedigree(self):
-        request_environ = add_request_intercept(sample_pedigree1)
+        request_environ = add_request_intercept(sample_pedigree)
         self.fs.pedigree('me')
         self.assertTrue(request_environ['PATH_INFO'].endswith('pedigree'), 'pedigree request failed with "me"')
 
     def test_accepts_single_pedigree(self):
-        request_environ = add_request_intercept(sample_pedigree1)
+        request_environ = add_request_intercept(sample_pedigree)
         self.fs.pedigree(self.id)
         self.assertTrue(request_environ['PATH_INFO'].endswith('pedigree/' + self.id), 'incorrect pedigree request with single person ID')
 
@@ -220,7 +220,7 @@ class TestFamilyTreePedigree(TestFamilyTree):
         self.assertTrue(request_environ['PATH_INFO'].endswith('pedigree/' + self.id + ',' + self.id2), 'incorrect pedigree request with list of person IDs')
 
     def test_single_returns_single(self):
-        add_request_intercept(sample_pedigree1)
+        add_request_intercept(sample_pedigree)
         pedigree = self.fs.pedigree(self.id)
         self.assertEqual(type(pedigree), dict, 'single pedigree response is wrong type')
 
@@ -231,45 +231,45 @@ class TestFamilyTreePedigree(TestFamilyTree):
         self.assertEqual(len(pedigree_list), 2, 'multiple pedigree response has wrong length')
 
     def test_adds_one_numeric_query_param_from_kwargs(self):
-        request_environ = add_request_intercept(sample_pedigree1)
+        request_environ = add_request_intercept(sample_pedigree)
         self.fs.pedigree(self.id, ancestors=4)
         self.assertIn('ancestors=4', request_environ['QUERY_STRING'], 'single query parameter not included')
 
     def test_adds_one_string_query_param_from_kwargs(self):
-        request_environ = add_request_intercept(sample_pedigree1)
+        request_environ = add_request_intercept(sample_pedigree)
         self.fs.pedigree(self.id, properties='all')
         self.assertIn('properties=all', request_environ['QUERY_STRING'], 'single query parameter not included')
 
     def test_adds_multiple_query_params_from_kwargs(self):
-        request_environ = add_request_intercept(sample_pedigree1)
+        request_environ = add_request_intercept(sample_pedigree)
         self.fs.pedigree(self.id, ancestors=4, properties='all')
         self.assertIn('ancestors=4', request_environ['QUERY_STRING'], 'one of multiple query parameters not included')
         self.assertIn('properties=all', request_environ['QUERY_STRING'], 'one of multiple query parameters not included')
 
     def test_adds_one_numeric_query_param_from_dict(self):
-        request_environ = add_request_intercept(sample_pedigree1)
+        request_environ = add_request_intercept(sample_pedigree)
         self.fs.pedigree(self.id, {'ancestors': 4})
         self.assertIn('ancestors=4', request_environ['QUERY_STRING'], 'single query parameter not included')
 
     def test_adds_one_string_query_param_from_dict(self):
-        request_environ = add_request_intercept(sample_pedigree1)
+        request_environ = add_request_intercept(sample_pedigree)
         self.fs.pedigree(self.id, {'properties': 'all'})
         self.assertIn('properties=all', request_environ['QUERY_STRING'], 'single query parameter not included')
 
     def test_adds_multiple_query_params_from_dict(self):
-        request_environ = add_request_intercept(sample_pedigree1)
+        request_environ = add_request_intercept(sample_pedigree)
         self.fs.pedigree(self.id, {'ancestors': 4, 'properties': 'all'})
         self.assertIn('ancestors=4', request_environ['QUERY_STRING'], 'one of multiple query parameters not included')
         self.assertIn('properties=all', request_environ['QUERY_STRING'], 'one of multiple query parameters not included')
 
     def test_adds_query_params_from_kwargs_and_dict(self):
-        request_environ = add_request_intercept(sample_pedigree1)
+        request_environ = add_request_intercept(sample_pedigree)
         self.fs.pedigree(self.id, ancestors=4, options={'properties': 'all'})
         self.assertIn('ancestors=4', request_environ['QUERY_STRING'], 'one of multiple query parameters not included')
         self.assertIn('properties=all', request_environ['QUERY_STRING'], 'one of multiple query parameters not included')
 
     def test_adds_query_params_from_dict_and_kwargs(self):
-        request_environ = add_request_intercept(sample_pedigree1)
+        request_environ = add_request_intercept(sample_pedigree)
         self.fs.pedigree(self.id, {'ancestors': 4}, properties='all')
         self.assertIn('ancestors=4', request_environ['QUERY_STRING'], 'one of multiple query parameters not included')
         self.assertIn('properties=all', request_environ['QUERY_STRING'], 'one of multiple query parameters not included')
