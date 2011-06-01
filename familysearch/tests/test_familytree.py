@@ -275,5 +275,38 @@ class TestFamilyTreePedigree(TestFamilyTree):
         self.assertIn('properties=all', request_environ['QUERY_STRING'], 'one of multiple query parameters not included')
 
 
+class TestFamilyTreeSearch(TestFamilyTree):
+
+    def test_adds_one_query_param_from_kwargs(self):
+        request_environ = add_request_intercept(sample_search)
+        self.fs.search(givenName='John')
+        self.assertIn('givenName=John', request_environ['QUERY_STRING'], 'single query parameter not included')
+
+    def test_adds_multiple_query_params_from_kwargs(self):
+        request_environ = add_request_intercept(sample_search)
+        self.fs.search(givenName='John', familyName='Smith')
+        self.assertIn('givenName=John', request_environ['QUERY_STRING'], 'one of multiple query parameters not included')
+        self.assertIn('familyName=Smith', request_environ['QUERY_STRING'], 'one of multiple query parameters not included')
+
+    def test_adds_one_query_param_from_dict(self):
+        request_environ = add_request_intercept(sample_search)
+        self.fs.search({'givenName': 'John'})
+        self.assertIn('givenName=John', request_environ['QUERY_STRING'], 'single query parameter not included')
+
+    def test_adds_multiple_query_params_from_dict(self):
+        request_environ = add_request_intercept(sample_search)
+        self.fs.search({'givenName': 'John', 'familyName': 'Smith'})
+        self.assertIn('givenName=John', request_environ['QUERY_STRING'], 'one of multiple query parameters not included')
+        self.assertIn('familyName=Smith', request_environ['QUERY_STRING'], 'one of multiple query parameters not included')
+
+    def test_adds_multiple_query_params_from_kwargs_and_dict(self):
+        request_environ = add_request_intercept(sample_search)
+        self.fs.search(givenName='John', familyName='Smith', options={'father.birthPlace': 'London', 'mother.birthPlace': 'Paris'})
+        self.assertIn('givenName=John', request_environ['QUERY_STRING'], 'one of multiple query parameters not included')
+        self.assertIn('familyName=Smith', request_environ['QUERY_STRING'], 'one of multiple query parameters not included')
+        self.assertIn('father.birthPlace=London', request_environ['QUERY_STRING'], 'one of multiple query parameters not included')
+        self.assertIn('mother.birthPlace=Paris', request_environ['QUERY_STRING'], 'one of multiple query parameters not included')
+
+
 if __name__ == '__main__':
     unittest.main()
