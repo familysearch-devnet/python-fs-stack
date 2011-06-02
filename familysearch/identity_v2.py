@@ -117,9 +117,9 @@ class IdentityV2(object):
         """
         url = self.identity_base + 'session'
         try:
-            session = identity.parse(self._request(url)).session.id
+            self.session_id = identity.parse(self._request(url)).session.id
             self.logged_in = True
-            return session
+            return self.session_id
         except:
             self.logged_in = False
             raise
