@@ -116,13 +116,9 @@ class IdentityV2(object):
 
         """
         url = self.identity_base + 'session'
-        try:
-            self.session_id = identity.parse(self._request(url)).session.id
-            self.logged_in = True
-            return self.session_id
-        except:
-            self.logged_in = False
-            raise
+        self.session_id = identity.parse(self._request(url)).session.id
+        self.logged_in = True
+        return self.session_id
 
     def request_token(self, callback_url='oob'):
         """
