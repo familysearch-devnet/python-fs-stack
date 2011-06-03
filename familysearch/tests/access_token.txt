@@ -1,0 +1,1 @@
+oauth_token=FAKE_TOKEN&oauth_token_secret=FAKE_SECRET
