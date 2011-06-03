@@ -172,9 +172,9 @@ class IdentityV2(object):
         if not request_token and self.session_id:
             # Use current session ID for oauth_token if it is set
             request_token = self.session_id
-            if not token_secret and self.session_id in self.oauth_secrets:
-                # Use saved secret for oauth_token_secret if it is set
-                token_secret = self.oauth_secrets[request_token]
+        if not token_secret and request_token in self.oauth_secrets:
+            # Use saved secret for oauth_token_secret if it is set
+            token_secret = self.oauth_secrets[request_token]
         url = self.identity_properties['access.token.url']
         oauth_response = self._oauth_request(url, token_secret,
                                              oauth_token=request_token,
