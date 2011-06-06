@@ -122,10 +122,7 @@ class FamilyTreeV2(object):
             url = self._add_query_params(url, options, **kw_options)
         response = json.load(self._request(url))['searches']
         response = self._remove_nones(response)
-        if len(response) == 1:
-            return response[0]
-        else:
-            return response
+        return response[0]
 
     def match(self, person_id=None, options={}, **kw_options):
         """
@@ -142,10 +139,7 @@ class FamilyTreeV2(object):
             url = self._add_query_params(url, options, **kw_options)
         response = json.load(self._request(url))['matches']
         response = self._remove_nones(response)
-        if len(response) == 1:
-            return response[0]
-        else:
-            return response
+        return response[0]
 
 from . import FamilySearch
 FamilySearch.__bases__ += (FamilyTreeV2,)
