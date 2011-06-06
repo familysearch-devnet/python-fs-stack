@@ -7,6 +7,18 @@ except ImportError:
     import simplejson as json
 from common import *
 
+sample_person1 = load_sample('person1.json')
+sample_person2 = load_sample('person2.json')
+sample_person_list = load_sample('person_list.json')
+sample_persona = load_sample('persona.json')
+sample_persona_list = load_sample('persona_list.json')
+sample_version = load_sample('version.json')
+sample_version_list = load_sample('version_list.json')
+sample_pedigree = load_sample('pedigree.json')
+sample_pedigree_list = load_sample('pedigree_list.json')
+sample_search = load_sample('search.json')
+sample_match = load_sample('match.json')
+
 
 class TestFamilyTree(unittest.TestCase):
 

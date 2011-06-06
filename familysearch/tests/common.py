@@ -12,22 +12,6 @@ except ImportError:
     def load_sample(filename):
         return open(os.path.join(data_dir, filename)).read()
 
-sample_person1 = load_sample('person1.json')
-sample_person2 = load_sample('person2.json')
-sample_person_list = load_sample('person_list.json')
-sample_persona = load_sample('persona.json')
-sample_persona_list = load_sample('persona_list.json')
-sample_version = load_sample('version.json')
-sample_version_list = load_sample('version_list.json')
-sample_pedigree = load_sample('pedigree.json')
-sample_pedigree_list = load_sample('pedigree_list.json')
-sample_search = load_sample('search.json')
-sample_match = load_sample('match.json')
-sample_login = load_sample('login.json')
-sample_identity_properties = load_sample('identity_properties.json')
-sample_request_token = load_sample('request_token.txt')
-sample_access_token = load_sample('access_token.txt')
-
 default_headers = {'Content-Type': 'application/json'}
 
 def add_request_intercept(response, out_environ=None, status='200 OK',

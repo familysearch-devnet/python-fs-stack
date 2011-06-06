@@ -8,6 +8,11 @@ except ImportError:
     import simplejson as json
 from common import *
 
+sample_login = load_sample('login.json')
+sample_identity_properties = load_sample('identity_properties.json')
+sample_request_token = load_sample('request_token.txt')
+sample_access_token = load_sample('access_token.txt')
+
 
 class TestIdentity(unittest.TestCase):
 
