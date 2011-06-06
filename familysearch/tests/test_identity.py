@@ -359,6 +359,13 @@ class TestIdentityAccessToken(TestIdentity):
         self.assertEqual(self.fs.session_id, self.real_token, 'access_token request failed to set correct session ID')
         self.assertNotIn(self.temp_token, self.fs.oauth_secrets, 'access_token request failed to unset old OAuth temporary credentials identifier')
 
+    def test_failed_access_token(self):
+        add_request_intercept(sample_identity_properties)
+        add_request_intercept('', status='401 Unauthorized', port=3)
+        self.fs.logged_in = True
+        self.assertRaises(urllib2.HTTPError, self.fs.access_token, self.verifier, request_token=self.temp_token, token_secret=self.secret)
+        self.assertFalse(self.fs.logged_in, 'should not be logged in after receiving error 401')
+
 
 if __name__ == '__main__':
     unittest.main()
