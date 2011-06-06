@@ -141,6 +141,7 @@ class TestIdentityAuthenticate(TestIdentity):
 
     def test_failed_authenticate(self):
         add_request_intercept('', status='401 Unauthorized')
+        self.fs.logged_in = True
         self.assertRaises(urllib2.HTTPError, self.fs.authenticate, self.username, self.password)
         self.assertFalse(self.fs.logged_in, 'should not be logged in after receiving error 401')
 
