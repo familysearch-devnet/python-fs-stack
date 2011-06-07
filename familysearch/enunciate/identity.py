@@ -4,6 +4,15 @@ except ImportError:
     import simplejson as json
 
 
+# Define `all` function for Python < 2.5
+if not hasattr(__builtins__, 'all'):
+    def all(iterable):
+        for element in iterable:
+            if not element:
+                return False
+        return True
+
+
 def parse(input):
     """Parse specified file or string and return an Identity object created from it."""
     if hasattr(input, "read"):
