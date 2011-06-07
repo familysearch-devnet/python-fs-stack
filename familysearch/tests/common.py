@@ -1,5 +1,6 @@
 """Common functions used by tests in multiple test suites"""
 
+import unittest
 import wsgi_intercept
 
 try:
@@ -31,3 +32,7 @@ def clear_request_intercpets():
     """Remove all installed request intercepts."""
     wsgi_intercept.remove_wsgi_intercept()
 
+if not hasattr(unittest.TestCase, 'assertIn'):
+    unittest.TestCase.assertIn = lambda self, member, container, msg=None: unittest.TestCase.assertTrue(self, member in container, msg)
+if not hasattr(unittest.TestCase, 'assertNotIn'):
+    unittest.TestCase.assertNotIn = lambda self, member, container, msg=None: unittest.TestCase.assertTrue(self, member not in container, msg)
