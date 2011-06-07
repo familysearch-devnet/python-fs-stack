@@ -85,7 +85,7 @@ class TestFamilySearch(unittest.TestCase):
         fs = familysearch.FamilySearch(self.agent, self.key, session=self.session)
         self.assertTrue(fs.logged_in, 'should be logged in after restoring session')
         self.assertRaises(urllib2.HTTPError, fs.person)
-        self.assertFalse(fs.logged_in, 'should not be logged after receiving error 401')
+        self.assertFalse(fs.logged_in, 'should not be logged in after receiving error 401')
 
     def test_passes_cookies_back(self):
         fs = familysearch.FamilySearch(self.agent, self.key)
