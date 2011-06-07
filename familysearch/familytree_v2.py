@@ -141,5 +141,5 @@ class FamilyTreeV2(object):
         response = self._remove_nones(response)
         return response[0]
 
-from . import FamilySearch
+from familysearch import FamilySearch
 FamilySearch.__bases__ += (FamilyTreeV2,)

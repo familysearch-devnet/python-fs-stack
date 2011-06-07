@@ -89,5 +89,5 @@ class AuthoritiesV1(object):
         else:
             return response
 
-from . import FamilySearch
+from familysearch import FamilySearch
 FamilySearch.__bases__ += (AuthoritiesV1,)

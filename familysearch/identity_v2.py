@@ -223,5 +223,5 @@ class IdentityV2(object):
                 self.logged_in = False
             raise
 
-from . import FamilySearch
+from familysearch import FamilySearch
 FamilySearch.__bases__ += (IdentityV2,)
