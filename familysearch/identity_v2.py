@@ -219,7 +219,7 @@ class IdentityV2(object):
         try:
             return self.opener.open(request)
         except urllib2.HTTPError, error:
-            if error.getcode() == 401:
+            if error.code == 401:
                 self.logged_in = False
             raise
 
