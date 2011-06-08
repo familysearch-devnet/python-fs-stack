@@ -19,13 +19,13 @@
 - Authorities Read
 - Person Version Read
 - Persona Read
-- Unit tests
-- Convenience methods to access FamilySearch's data model
+- Regression tests
 
 
 Future
 ------
 
+- Convenience methods to access FamilySearch's data model
 - Use persistent HTTP connections instead of a new connection for each request
 - Ensure Python 3 compatibility
 - Person Update
