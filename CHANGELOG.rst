@@ -5,6 +5,7 @@
 0.2
 ---
 
+* Supports Python 2.4
 * Supports Authorities requests (place, name, date, and culture)
 * Supports Person Version Read
 * Properly sends session ID on first request without needing to call session()

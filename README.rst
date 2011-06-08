@@ -15,7 +15,7 @@ FamilySearch_ `REST-style API`_.
 Dependencies
 ============
 
-- Python 2.5 or later
+- Python 2.4 or later
 - simplejson_, if using Python older than 2.6
 - wsgi_intercept_ 0.5.0 or later (only required to run test suite)
 
