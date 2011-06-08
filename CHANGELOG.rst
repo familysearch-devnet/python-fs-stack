@@ -2,8 +2,8 @@
  python-fs-stack Changelog
 ===========================
 
-0.2
----
+0.2 (8 Jun 2011)
+----------------
 
 * Supports Python 2.4
 * Supports Authorities requests (place, name, date, and culture)
