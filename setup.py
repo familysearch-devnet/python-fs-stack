@@ -11,9 +11,9 @@ setup(
     version=familysearch.__version__,
     description='Python wrapper for all FamilySearch APIs',
     long_description=open('README.rst').read(),
-    url='https://devnet.familysearch.org/downloads/sample-code',
+    url='http://pypi.python.org/pypi/python-fs-stack',
     author='Peter Henderson',
-    author_email='peter.henderson@ldschurch.org',
+    author_email='peterhenderson@byu.net',
     license='FamilySearch API License Agreement <https://devnet.familysearch.org/downloads/sample-code/sample-clients/sample-client-license>',
     classifiers=[
         'Development Status :: 4 - Beta',
