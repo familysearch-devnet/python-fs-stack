@@ -8,6 +8,11 @@ FamilySearch_ `REST-style API`_.
 .. _FamilySearch: https://new.familysearch.org/
 .. _REST-style API: https://devnet.familysearch.org/docs/api
 
+:Home Page:
+  http://pypi.python.org/pypi/python-fs-stack
+:Source Code:
+  https://github.com/familysearch-devnet/python-fs-stack
+
 
 .. contents::
 
@@ -26,9 +31,22 @@ Dependencies
 Installation
 ============
 
-::
+Using pip_::
+
+  pip install python-fs-stack
+
+or using easy_install_ (from setuptools_ or distribute_)::
+
+  easy_install python-fs-stack
+
+or (after downloading manually)::
 
   python setup.py install
+
+.. _pip: http://www.pip-installer.org/
+.. _easy_install: http://peak.telecommunity.com/DevCenter/EasyInstall
+.. _setuptools: http://pypi.python.org/pypi/setuptools
+.. _distribute: http://pypi.python.org/pypi/distribute
 
 
 Example Usage
